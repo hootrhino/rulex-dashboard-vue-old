@@ -26,7 +26,7 @@
           ><div class="grid-content bg-purple">
             <el-card shadow="always" class="box-card" style="height: 160px">
               <div slot="header" class="clearfix">
-                <span>内存使用</span>
+                <span>CPU使用</span>
               </div>
               <el-progress
                 :percentage="this.systemInfo.system"
