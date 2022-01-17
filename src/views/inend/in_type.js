@@ -3,49 +3,49 @@ const in_types = {
     {
       type: 'el-input-text',
       name: 'host',
-      label: 'Mqtt Server 地址',
-      value: '',
-      required: false,
+      label: '主机地址',
+      value: '127.0.0.1',
+      required: true,
       placeholder: '127.0.0.1'
     },
     {
       type: 'el-input-number',
       name: 'port',
       label: '服务端口',
-      value: 0,
-      required: false,
+      value: 1883,
+      required: true,
       placeholder: '1883'
     },
     {
       type: 'el-input-text',
       name: 'topic',
-      label: '订阅Topic',
-      value: '',
-      required: false,
+      label: '订阅主题',
+      value: 'rulex-data-1',
+      required: true,
       placeholder: 'rulex-data-1'
     },
     {
       type: 'el-input-text',
       name: 'clientId',
       label: '客户端ID',
-      value: '',
-      required: false,
+      value: 'rulex-1',
+      required: true,
       placeholder: 'rulex-1'
     },
     {
       type: 'el-input-text',
       name: 'username',
-      value: '',
-      label: 'MQTT用户名',
-      required: false,
+      value: 'rulex-1',
+      label: '用  户',
+      required: true,
       placeholder: 'rulex-1'
     },
     {
       type: 'el-input-text',
       name: 'password',
-      label: 'MQTT密码',
+      label: '密  码',
       value: '',
-      required: false,
+      required: true,
       placeholder: 'rulex-1'
     }
     // label: "MQTT桥接",
@@ -62,8 +62,8 @@ const in_types = {
       type: 'el-input-number',
       name: 'port',
       label: '服务端口',
-      value: 0,
-      required: false,
+      value: 2581,
+      required: true,
       placeholder: '2581'
     }
     // label: 'HTTP桥接',
@@ -74,25 +74,25 @@ const in_types = {
     {
       type: 'el-input-text',
       name: 'host',
-      label: 'UDP 服务地址',
-      value: '',
-      required: false,
+      label: '服务地址',
+      value: '127.0.0.1',
+      required: true,
       placeholder: '127.0.0.1'
     },
     {
       type: 'el-input-number',
       name: 'port',
       label: '服务端口',
-      value: 0,
-      required: false,
+      value: 2582,
+      required: true,
       placeholder: '2582'
     },
     {
       type: 'el-input-number',
       name: 'maxDataLength',
       label: '最大包长',
-      value: 0,
-      required: false,
+      value: 1024,
+      required: true,
       placeholder: '1024'
     }
     // label: 'UDP桥接',
@@ -105,9 +105,9 @@ const in_types = {
       type: 'el-input-number',
       name: 'port',
       label: '服务端口',
-      value: 0,
-      required: false,
-      placeholder: '2583'
+      placeholder: '2583',
+      required: true,
+      value: 2583
     }
     // label: 'COAP桥接',
     // port: 2583
@@ -116,10 +116,10 @@ const in_types = {
   GRPC: [
     {
       type: 'el-input-number',
-      label: '服务端口',
       name: 'port',
-      value: 0,
-      required: false,
+      label: '服务端口',
+      value: 2584,
+      required: true,
       placeholder: '2584'
     }
     // label: 'GRPC桥接',
@@ -130,44 +130,43 @@ const in_types = {
     {
       type: 'el-input-text',
       name: 'address',
-      label: '地址',
-      value: '',
-      required: false,
-      placeholder: 'uart1'
+      label: '串口名称',
+      value: '/dev/ttyS1',
+      required: true,
+      placeholder: '/dev/ttyS1'
     },
     {
       type: 'el-input-number',
       name: 'baudRate',
       label: '波特率',
-      value: 0,
-      required: false,
+      value: 115200,
+      required: true,
       placeholder: '115200'
     },
     {
       type: 'el-input-number',
       name: 'timeout',
-      label: '超时',
-      value: 0,
-      required: false,
+      label: '超时时长',
+      value: 5,
+      required: true,
       placeholder: '5'
     },
     {
       type: 'el-input-number',
       name: 'dataBits',
       label: '数据位',
-      value: 0,
-      required: false,
+      value: 8,
+      required: true,
       placeholder: '8'
     },
     {
       type: 'el-select',
       name: 'parity',
-      label: '奇偶校验位',
-      value: '',
-      required: false,
+      label: '奇偶校验',
+      value: 'N',
+      required: true,
       placeholder: '请选择',
       selectOptions: [
-        { value: '', label: '请选择' },
         { value: 'N', label: '无校验' },
         { value: 'E', label: '偶校验' },
         { value: 'O', label: '奇校验' }
@@ -177,8 +176,8 @@ const in_types = {
       type: 'el-input-number',
       name: 'stopBits',
       label: '停止位',
-      value: 0,
-      required: false,
+      value: 1,
+      required: true,
       placeholder: '1'
     }
     // label: '通用串口',
@@ -190,269 +189,37 @@ const in_types = {
     // stopBits: 1
   ],
 
-  MODBUS_TCP_MASTER: [
+  MODBUS_MASTER: [
     {
-      type: 'el-input-number',
-      name: 'timeout',
-      label: '超时',
-      value: 0,
-      required: false,
-      placeholder: '10'
-    },
-    {
-      type: 'el-input-number',
-      name: 'slaverId',
-      label: '从机id',
-      value: 0,
-      required: false,
-      placeholder: '1'
-    },
-    {
-      type: 'el-input-number',
-      name: 'frequency',
-      label: '频率',
-      value: 0,
-      required: false,
-      placeholder: '3'
-    },
-    {
-      type: 'el-inline',
-      label: '串口配置',
-      name: 'rtuConfig',
-      children: [
-        {
-          type: 'el-input-text',
-          name: 'uart',
-          label: '串口',
-          value: '',
-          required: false,
-          placeholder: 'COM1'
-        },
-        {
-          type: 'el-input-number',
-          name: 'baudRate',
-          label: '波特率',
-          value: 0,
-          required: false,
-          placeholder: '115200'
-        }
-      ]
-    },
-    {
-      type: 'el-inline',
-      label: 'TCP配置',
-      name: 'tcpConfig',
-      children: [
-        {
-          type: 'el-input-text',
-          name: 'ip',
-          label: 'ip',
-          value: '',
-          required: false,
-          placeholder: '127.0.0.1'
-        },
-        {
-          type: 'el-input-number',
-          name: 'port',
-          label: '端口',
-          value: 0,
-          required: false,
-          placeholder: '502'
-        }
-      ]
-    },
-    {
-      type: 'el-inline',
-      label: '注册参数',
-      name: 'registerParams',
-      children: [
-        {
-          type: 'el-input-number',
-          name: 'function',
-          label: '函数',
-          value: 0,
-          required: false,
-          placeholder: '3'
-        },
-        {
-          type: 'el-input-number',
-          name: 'address',
-          label: '地址',
-          value: 0,
-          required: false,
-          placeholder: '0'
-        },
-        {
-          type: 'el-input-number',
-          name: 'quantity',
-          label: '数量',
-          value: 0,
-          required: false,
-          placeholder: '10'
-        }
+      type: 'el-select',
+      name: 'mode',
+      label: '工作模式',
+      value: '',
+      required: true,
+      placeholder: '请选择',
+      selectOptions: [
+        { value: 'TCP', label: 'TCP' },
+        { value: 'RTU', label: 'RTU' }
       ]
     }
-    // label: 'Modbus TCP主模式',
-    // timeout: 10,
-    // slaverId: 1,
-    // frequency: 3,
-    // rtuConfig: {
-    //   uart: 'COM1',
-    //   baudRate: 115200
-    // },
-    // tcpConfig: {
-    //   ip: '127.0.0.1',
-    //   port: 502
-    // },
-    // registerParams: [
-    //   {
-    //     function: 3,
-    //     address: 0,
-    //     quantity: 10
-    //   }
-    // ]
-  ],
-
-  MODBUS_RTU_MASTER: [
-    {
-      type: 'el-input-number',
-      name: 'timeout',
-      label: '超时',
-      value: 0,
-      required: false,
-      placeholder: '10'
-    },
-    {
-      type: 'el-input-number',
-      name: 'slaverId',
-      label: '从机id',
-      value: 0,
-      required: false,
-      placeholder: '1'
-    },
-    {
-      type: 'el-input-number',
-      name: 'frequency',
-      label: '频率',
-      value: 0,
-      required: false,
-      placeholder: '3'
-    },
-    {
-      type: 'el-inline',
-      label: '串口配置',
-      name: 'rtuConfig',
-      children: [
-        {
-          type: 'el-input-text',
-          name: 'uart',
-          label: '串口',
-          value: '',
-          required: false,
-          placeholder: 'COM1'
-        },
-        {
-          type: 'el-input-number',
-          name: 'baudRate',
-          label: '波特率',
-          value: 0,
-          required: false,
-          placeholder: '115200'
-        }
-      ]
-    },
-    {
-      type: 'el-inline',
-      label: 'TCP配置',
-      name: 'tcpConfig',
-      children: [
-        {
-          type: 'el-input-text',
-          name: 'ip',
-          label: 'ip',
-          value: '',
-          required: false,
-          placeholder: '127.0.0.1'
-        },
-        {
-          type: 'el-input-number',
-          name: 'port',
-          label: '端口',
-          value: 0,
-          required: false,
-          placeholder: '502'
-        }
-      ]
-    },
-    {
-      type: 'el-inline',
-      label: '注册参数',
-      name: 'registerParams',
-      children: [
-        {
-          type: 'el-input-number',
-          name: 'function',
-          label: '函数',
-          value: 0,
-          required: false,
-          placeholder: '3'
-        },
-        {
-          type: 'el-input-number',
-          name: 'address',
-          label: '地址',
-          value: 0,
-          required: false,
-          placeholder: '0'
-        },
-        {
-          type: 'el-input-number',
-          name: 'quantity',
-          label: '数量',
-          value: 0,
-          required: false,
-          placeholder: '10'
-        }
-      ]
-    }
-
-    // label: 'Modbus RTU主模式',
-    // timeout: 10,
-    // slaverId: 1,
-    // frequency: 3,
-    // rtuConfig: {
-    //   uart: 'COM1',
-    //   baudRate: 115200
-    // },
-    // tcpConfig: {
-    //   ip: '127.0.0.1',
-    //   port: 502
-    // },
-    // registerParams: [
-    //   {
-    //     function: 3,
-    //     address: 0,
-    //     quantity: 10
-    //   }
-    // ]
   ],
 
   SNMP_SERVER: [
     {
       type: 'el-input-number',
       name: 'frequency',
-      label: '频率',
-      value: 0,
-      required: false,
+      label: '采集频率',
+      value: 5,
+      required: true,
       placeholder: '5'
     },
     {
       type: 'el-input-number',
       name: 'timeout',
-      label: '超时',
-      value: 0,
-      required: false,
-      placeholder: '3'
+      label: '超时时长',
+      value: 5,
+      required: true,
+      placeholder: '5'
     },
     {
       type: 'el-inline',
@@ -462,46 +229,42 @@ const in_types = {
         {
           type: 'el-input-text',
           name: 'target',
-          label: '目标地址',
-          value: '',
-          required: false,
+          label: '主机地址',
+          value: '127.0.0.1',
+          required: true,
           placeholder: '127.0.0.1'
         },
         {
           type: 'el-input-number',
           name: 'port',
-          label: '端口',
-          value: 0,
-          required: false,
-          placeholder: '161'
-        },
-        {
-          type: 'el-input-text',
-          name: 'transport',
-          label: '传输模式',
-          value: '',
-          required: false,
-          placeholder: 'udp'
+          label: '主机端口',
+          value: 1161,
+          required: true,
+          placeholder: '1161'
         },
         {
           type: 'el-select',
+          name: 'transport',
+          label: '传输模式',
+          value: 'udp',
+          required: true,
+          placeholder: 'udp',
+          selectOptions: [{ value: 'udp', label: 'UDP' }]
+        },
+        {
+          type: 'el-input-text',
           name: 'community',
-          label: '开放',
-          value: '',
-          required: false,
-          placeholder: '请选择',
-          selectOptions: [
-            { value: '', label: '请选择' },
-            { value: 'public', label: '开放' },
-            { value: 'private', label: '不开放' }
-          ]
+          label: '社区名称',
+          value: 'public',
+          required: true,
+          placeholder: 'public'
         },
         {
           type: 'el-input-number',
           name: 'version',
-          label: '版本',
-          value: 0,
-          required: false,
+          label: '协议版本',
+          value: 3,
+          required: true,
           placeholder: '3'
         },
         {
@@ -509,7 +272,7 @@ const in_types = {
           name: 'dataModels',
           label: '数据模型',
           value: '',
-          required: false,
+          required: true,
           placeholder: ''
         }
       ]
@@ -528,7 +291,237 @@ const in_types = {
     //     dataModels: [],
     //   },
     // ],
+  ],
+
+  TCP: [
+    {
+      type: 'el-select',
+      name: 'mode',
+      label: '工作模式',
+      value: 'TCP',
+      required: true,
+      placeholder: '请选择',
+      selectOptions: [
+        { value: 'TCP', label: 'TCP' },
+        { value: 'RTU', label: 'RTU' }
+      ]
+    },
+    {
+      type: 'el-input-number',
+      name: 'timeout',
+      label: '超时',
+      value: 5,
+      required: true,
+      placeholder: '5'
+    },
+    {
+      type: 'el-input-number',
+      name: 'slaverId',
+      label: '从机地址',
+      value: 1,
+      required: true,
+      placeholder: '1'
+    },
+    {
+      type: 'el-input-number',
+      name: 'frequency',
+      label: '采集频率',
+      value: 5,
+      required: true,
+      placeholder: '5'
+    },
+    {
+      type: 'el-inline',
+      label: 'TCP配置',
+      name: 'config',
+      children: [
+        {
+          type: 'el-input-text',
+          name: 'ip',
+          label: '采集地址',
+          value: '127.0.0.1',
+          required: true,
+          placeholder: '127.0.0.1'
+        },
+        {
+          type: 'el-input-number',
+          name: 'port',
+          label: '采集端口',
+          value: 1254,
+          required: true,
+          placeholder: '1254'
+        }
+      ]
+    },
+    {
+      type: 'el-inline',
+      label: '注册参数',
+      name: 'registerParams',
+      children: [
+        {
+          type: 'el-input-text',
+          name: 'tag',
+          label: '标签',
+          value: 'A',
+          required: true,
+          placeholder: 'A'
+        },
+        {
+          type: 'el-input-number',
+          name: 'function',
+          label: '功能代码',
+          value: 3,
+          required: true,
+          placeholder: '3'
+        },
+        {
+          type: 'el-input-number',
+          name: 'address',
+          label: '起始地址',
+          value: 0,
+          required: true,
+          placeholder: '0'
+        },
+        {
+          type: 'el-input-number',
+          name: 'quantity',
+          label: '读取数量',
+          value: 10,
+          required: true,
+          placeholder: '10'
+        }
+      ]
+    }
+  ],
+
+  RTU: [
+    {
+      type: 'el-select',
+      name: 'mode',
+      label: '工作模式',
+      value: 'RTU',
+      required: true,
+      placeholder: '请选择',
+      selectOptions: [
+        { value: 'TCP', label: 'TCP' },
+        { value: 'RTU', label: 'RTU' }
+      ]
+    },
+    {
+      type: 'el-input-number',
+      name: 'timeout',
+      label: '超时时长',
+      value: 5,
+      required: true,
+      placeholder: '5'
+    },
+    {
+      type: 'el-input-number',
+      name: 'slaverId',
+      label: '从机地址',
+      value: 1,
+      required: true,
+      placeholder: '1'
+    },
+    {
+      type: 'el-input-number',
+      name: 'frequency',
+      label: '采集频率',
+      value: 5,
+      required: true,
+      placeholder: '5'
+    },
+    {
+      type: 'el-inline',
+      label: '配置',
+      name: 'config',
+      children: [
+        {
+          type: 'el-input-text',
+          name: 'uart',
+          label: '串口名称',
+          value: 'com1',
+          required: true,
+          placeholder: 'com1'
+        },
+        {
+          type: 'el-input-number',
+          name: 'baudRate',
+          label: '波特率',
+          value: 115200,
+          required: true,
+          placeholder: '115200'
+        },
+        {
+          type: 'el-input-number',
+          name: 'dataBits',
+          label: '数据位',
+          value: 8,
+          required: true,
+          placeholder: '8'
+        },
+        {
+          type: 'el-select',
+          name: 'parity',
+          label: '奇偶校验',
+          value: 'N',
+          required: true,
+          placeholder: '请选择',
+          selectOptions: [
+            { value: 'N', label: '无校验' },
+            { value: 'E', label: '偶校验' },
+            { value: 'O', label: '奇校验' }
+          ]
+        },
+        {
+          type: 'el-input-number',
+          name: 'stopBits',
+          label: '停止位',
+          value: 1,
+          required: true,
+          placeholder: '1'
+        }
+      ]
+    },
+    {
+      type: 'el-inline',
+      label: '注册参数',
+      name: 'registerParams',
+      children: [
+        {
+          type: 'el-input-text',
+          name: 'tag',
+          label: '标签',
+          value: 'A',
+          required: true,
+          placeholder: 'A'
+        },
+        {
+          type: 'el-input-number',
+          name: 'function',
+          label: 'Modbus 功能',
+          value: 3,
+          required: true,
+          placeholder: '3'
+        },
+        {
+          type: 'el-input-number',
+          name: 'address',
+          label: '起始地址',
+          value: 0,
+          required: true,
+          placeholder: '0'
+        },
+        {
+          type: 'el-input-number',
+          name: 'quantity',
+          label: '读取数量',
+          value: 10,
+          required: true,
+          placeholder: '10'
+        }
+      ]
+    }
   ]
 }
 export default in_types
-

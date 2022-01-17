@@ -3,17 +3,22 @@
     <el-form
       ref="configFormRef"
       :model="configForm"
-      :rules="configFormRules"
       label-width="auto"
       label-position="left"
     >
-      <template v-for="item in options">
+      <template v-for="item in options_">
         <el-form-item
           v-if="item.type !== 'el-inline'"
           :key="item.name"
           :label="item.label"
           :prop="item.name"
-          :required="item.required"
+          :rules="[
+            {
+              required: item.required,
+              message: `请输入${item.label}`,
+              trigger: 'blur',
+            },
+          ]"
         >
           <el-input
             v-if="item.type == 'el-input-text'"
@@ -23,6 +28,7 @@
             :placeholder="item.placeholder"
             clearable
             maxlength="20"
+            @change="changed($event, item.name)"
           />
           <el-input-number
             v-if="item.type == 'el-input-number'"
@@ -31,6 +37,7 @@
             style="width: 100%"
             controls-position="right"
             :placeholder="item.placeholder"
+            @change="changed($event, item.name)"
           />
           <el-select
             v-if="item.type === 'el-select'"
@@ -39,17 +46,18 @@
             clearable
             size="small"
             :placeholder="item.placeholder"
+            @change="changed($event, item.name)"
           >
             <el-option
               v-for="itemChild in item.selectOptions"
-              :key="itemChild.value"
+              :key="itemChild.name"
               :label="itemChild.label"
               :value="itemChild.value"
             />
           </el-select>
         </el-form-item>
 
-        <el-row v-if="item.type === 'el-inline'" :key="item.name" :gutter="15">
+        <el-row v-if="item.type === 'el-inline'" :key="item.name" :gutter="10">
           <el-col
             v-for="childrenItem in item.children"
             :key="childrenItem.name"
@@ -58,6 +66,13 @@
             <el-form-item
               :label="childrenItem.label"
               :prop="item.name + '.' + childrenItem.name"
+              :rules="[
+                {
+                  required: childrenItem.required,
+                  message: `请输入${childrenItem.label}`,
+                  trigger: 'blur',
+                },
+              ]"
             >
               <el-input
                 v-if="childrenItem.type == 'el-input-text'"
@@ -65,6 +80,7 @@
                 size="small"
                 clearable
                 :placeholder="childrenItem.placeholder"
+                @change="changed($event, `${item.name}.${childrenItem.name}`)"
               />
               <el-input-number
                 v-if="childrenItem.type == 'el-input-number'"
@@ -74,6 +90,7 @@
                 controls-position="right"
                 clearable
                 :placeholder="childrenItem.placeholder"
+                @change="changed($event, `${item.name}.${childrenItem.name}`)"
               />
               <el-select
                 v-if="childrenItem.type == 'el-select'"
@@ -82,6 +99,7 @@
                 clearable
                 size="small"
                 :placeholder="childrenItem.placeholder"
+                @change="changed($event, `${item.name}.${childrenItem.name}`)"
               >
                 <el-option
                   v-for="itemSon in childrenItem.selectOptions"
@@ -99,12 +117,24 @@
       <el-row
         v-for="(item, index) in configForm.moreRegisterParams"
         :key="index"
-        :gutter="15"
+        :gutter="10"
       >
-        <el-col :span="8">
+        <el-col :span="6">
           <el-form-item
-            label="函数"
+            label="标签"
+            :prop="'moreRegisterParams.' + index + '.tag'"
+            :rules="[
+              { required: true, message: '请输入标签', trigger: 'blur' },
+            ]"
+          >
+            <el-input v-model="item.tag" size="small" clearable />
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item
+            label="功能代码"
             :prop="'moreRegisterParams.' + index + '.function'"
+            :rules="[{ required: true, message: '111', trigger: 'blur' }]"
           >
             <el-input-number
               v-model="item.function"
@@ -115,10 +145,13 @@
             />
           </el-form-item>
         </el-col>
-        <el-col :span="8">
+        <el-col :span="6">
           <el-form-item
-            label="地址"
+            label="起始地址"
             :prop="'moreRegisterParams.' + index + '.address'"
+            :rules="[
+              { required: true, message: '请输入起始地址', trigger: 'blur' },
+            ]"
           >
             <el-input-number
               v-model="item.address"
@@ -129,10 +162,13 @@
             />
           </el-form-item>
         </el-col>
-        <el-col :span="7">
+        <el-col :span="5">
           <el-form-item
-            label="数量"
+            label="读取数量"
             :prop="'moreRegisterParams.' + index + '.quantity'"
+            :rules="[
+              { required: true, message: '请输入读取数量', trigger: 'blur' },
+            ]"
           >
             <el-input-number
               v-model="item.quantity"
@@ -143,7 +179,7 @@
             />
           </el-form-item>
         </el-col>
-        <el-col :span="1">
+        <el-col :span="1" class="delete-icon">
           <i
             class="el-icon-delete"
             style="cursor: pointer"
@@ -151,7 +187,8 @@
           />
         </el-col>
       </el-row>
-      <el-form-item v-if="protocol === 'MODBUS_TCP_MASTER' || protocol === 'MODBUS_RTU_MASTER'" class="button-item">
+
+      <el-form-item v-if="!isEmpty(configForm.mode)" class="button-item">
         <el-button type="primary" size="small" @click="addRegisterParams">
           增加参数
         </el-button>
@@ -161,14 +198,11 @@
 </template>
 
 <script>
+import in_types from './../../views/inend/in_type'
 export default {
   props: {
     options: {
       type: Array,
-      required: true
-    },
-    protocol: {
-      type: String,
       required: true
     }
   },
@@ -177,48 +211,27 @@ export default {
       configForm: {
         moreRegisterParams: []
       },
-
-      configFormRules: {
-        host: [{ required: true, message: '请输入服务地址', trigger: ['blur', 'change'] }],
-        port: [{ required: true, message: '请输入端口号', trigger: ['blur', 'change'] }],
-        clientId: [{ required: true, message: '请输入客户端ID', trigger: ['blur', 'change'] }],
-        topic: [{ required: true, message: '请输入订阅Topic', trigger: ['blur', 'change'] }],
-        username: [{ required: true, message: '请输入MQTT用户名', trigger: ['blur', 'change'] }],
-        password: [{ required: true, message: '请输入订阅MQTT密码', trigger: ['blur', 'change'] }],
-        maxDataLength: [{ required: true, message: '请输入最大包长', trigger: ['blur', 'change'] }],
-        address: [{ required: true, message: '请输入最大地址', trigger: ['blur', 'change'] }],
-        baudRate: [{ required: true, message: '请输入波特率', trigger: ['blur', 'change'] }],
-        timeout: [{ required: true, message: '请输入超时时长', trigger: ['blur', 'change'] }],
-        dataBits: [{ required: true, message: '请输入数据位长度', trigger: ['blur', 'change'] }],
-        parity: [{ required: true, message: '请选择奇偶校验位', trigger: ['blur', 'change'] }],
-        stopBits: [{ required: true, message: '请输入停止位', trigger: ['blur', 'change'] }],
-        slaverId: [{ required: true, message: '请输入从机ID', trigger: ['blur', 'change'] }],
-        frequency: [{ required: true, message: '请输入频率', trigger: ['blur', 'change'] }],
-        'rtuConfig.uart': [{ required: true, message: '请输入串口', trigger: ['blur', 'change'] }],
-        'rtuConfig.baudRate': [{ required: true, message: '请输入波特率', trigger: ['blur', 'change'] }],
-        'tcpConfig.ip': [{ required: true, message: '请输入IP地址', trigger: ['blur', 'change'] }],
-        'tcpConfig.port': [{ required: true, message: '请输入端口号', trigger: ['blur', 'change'] }],
-        'registerParams.function': [{ required: true, message: '请输入函数', trigger: ['blur', 'change'] }],
-        'registerParams.address': [{ required: true, message: '请输入地址', trigger: ['blur', 'change'] }],
-        'registerParams.quantity': [{ required: true, message: '请输入数量', trigger: ['blur', 'change'] }],
-        'targets.target': [{ required: true, message: '请输入目标地址', trigger: ['blur', 'change'] }],
-        'targets.port': [{ required: true, message: '请输入端口号', trigger: ['blur', 'change'] }],
-        'targets.community': [{ required: true, message: '请选择是否开放', trigger: ['blur', 'change'] }],
-        'targets.transport': [{ required: true, message: '请输入传输模式', trigger: ['blur', 'change'] }],
-        'targets.version': [{ required: true, message: '请输入版本', trigger: ['blur', 'change'] }],
-        'targets.dataModels': [{ required: true, message: '请输入数据模型', trigger: ['blur', 'change'] }]
-      }
+      options_: [],
+      tcpConfig: [],
+      rtuConfig: [],
+      mergeTcpConfig: [],
+      mergeRtuConfig: []
     }
   },
 
   watch: {
-    options(val) {
+    options() {
+      this.options_ = this.options
+    },
+    options_() {
       this.setDefaultValue()
     }
   },
 
   created() {
-    this.setDefaultValue()
+    this.options_ = this.options
+    this.initModbus()
+    console.log(1111)
   },
 
   methods: {
@@ -227,36 +240,39 @@ export default {
       this.configForm = {
         moreRegisterParams: []
       }
-      if (this.options && this.options.length > 0) {
-        this.options.forEach((item, index) => {
-          if (item.children) {
-            this.configForm[item.name] = {}
-            item.children.forEach((i, j) => {
-              if (
-                !Object.prototype.hasOwnProperty.call(
-                  this.configForm[item.name],
-                  i.name
-                )
-              ) {
-                this.configForm[item.name][i.name] = i.value
-              }
+      if (this.options_ && this.options_.length > 0) {
+        this.options_.forEach((item1, index1) => {
+          const obj1 = item1
+          if (item1.children) {
+            this.configForm[item1.name] = {}
+            item1.children.forEach((item2, index2) => {
+              this.configForm[item1.name][item2.name] = item2.value
             })
           } else {
-            this.configForm[item.name] = item.value
+            if (Object.prototype.toString.call(obj1) === '[object Object]') {
+              this.configForm[item1.name] = this.deepClone(item1.value)
+            }
           }
         })
         this.configForm = Object.assign({}, this.configForm)
       }
     },
 
+    initModbus() {
+      this.tcpConfig = in_types['TCP']
+      this.rtuConfig = in_types['RTU']
+    },
+
     // 新增注册参数
     addRegisterParams() {
       this.configForm.moreRegisterParams.push({
-        function: 0,
+        tag: '',
+        function: 3,
         address: 0,
-        quantity: 0
+        quantity: 10
       })
     },
+
     deleteRegisterParams(item, index) {
       this.configForm.moreRegisterParams.splice(index, 1)
     },
@@ -264,7 +280,7 @@ export default {
     // 校验数据
     validateForm() {
       let flag = null
-      this.$refs.configFormRef.validate(valid => {
+      this.$refs.configFormRef.validate((valid) => {
         if (valid) {
           flag = true
           // 将值回传
@@ -277,14 +293,99 @@ export default {
     },
 
     calcSpan(e) {
-      const itemNum = e.length
-      if (itemNum === 2) {
-        return 12
-      } else if (itemNum === 3) {
-        return 8
-      } else if (itemNum === 6) {
-        return 24
+      let colSpan = 24
+      switch (e.length) {
+        case 2:
+          colSpan = 12
+          break
+        case 3:
+          colSpan = 8
+          break
+        case 4:
+          colSpan = 6
+          break
+        default:
+          colSpan = 24
       }
+      return colSpan
+    },
+
+    isEmpty(obj) {
+      if (typeof obj === 'number' && !isNaN(obj)) {
+        return false
+      }
+      if (!obj) {
+        return true
+      }
+      return Object.keys(obj).length < 1
+    },
+
+    // 对象深拷贝
+    deepClone(data) {
+      var type = this.getObjectType(data)
+      var obj
+      if (type === 'array') {
+        obj = []
+      } else if (type === 'object') {
+        obj = {}
+      } else {
+        // 不再具有下一层次
+        return data
+      }
+      if (type === 'array') {
+        for (var i = 0, len = data.length; i < len; i++) {
+          data[i] = (() => {
+            if (data[i] === 0) {
+              return data[i]
+            }
+            return data[i]
+          })()
+          if (data[i]) {
+            delete data[i].$parent
+          }
+          obj.push(this.deepClone(data[i]))
+        }
+      } else if (type === 'object') {
+        for (var key in data) {
+          if (data) {
+            delete data.$parent
+          }
+          obj[key] = this.deepClone(data[key])
+        }
+      }
+      return obj
+    },
+
+    // 获取对象类型
+    getObjectType(obj) {
+      var toString = Object.prototype.toString
+      var map = {
+        '[object Boolean]': 'boolean',
+        '[object Number]': 'number',
+        '[object String]': 'string',
+        '[object Function]': 'function',
+        '[object Array]': 'array',
+        '[object Date]': 'date',
+        '[object RegExp]': 'regExp',
+        '[object Undefined]': 'undefined',
+        '[object Null]': 'null',
+        '[object Object]': 'object'
+      }
+      if (obj instanceof Element) {
+        return 'element'
+      }
+      return map[toString.call(obj)]
+    },
+
+    changed(val, key) {
+      if (val === 'TCP') {
+        this.options_ = this.tcpConfig
+        this.options_[0].value = 'TCP'
+      } else if (val === 'RTU') {
+        this.options_ = this.rtuConfig
+        this.options_[0].value = 'RTU'
+      }
+      this.$set(this.configForm, key, val)
     }
   }
 }
@@ -309,6 +410,9 @@ export default {
   }
   /deep/ .el-form-item__error {
     padding-top: 0;
+  }
+  .delete-icon {
+    text-align: center;
   }
 }
 </style>

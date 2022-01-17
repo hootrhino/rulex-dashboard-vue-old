@@ -17,7 +17,7 @@
         </el-button>
 
         <el-dialog
-          width="900px"
+          width="1100px"
           title="新建资源"
           top="10vh"
           :show-close="false"
@@ -31,7 +31,7 @@
             :rules="createFormRules"
             label-width="78px"
           >
-            <el-form-item label="资源名称" label-position="left" prop="name">
+            <el-form-item label="资源名称" prop="name">
               <el-input
                 v-model="createForm.name"
                 placeholder="资源名称"
@@ -39,7 +39,7 @@
                 clearable
               />
             </el-form-item>
-            <el-form-item label="资源类型" label-position="left" prop="type">
+            <el-form-item label="资源类型" prop="type">
               <el-select
                 v-model="createForm.type"
                 placeholder="资源类型"
@@ -56,11 +56,7 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item
-              v-if="status.configFormVisible"
-              label="资源配置"
-              label-position="left"
-            >
+            <el-form-item v-if="status.configFormVisible" label="资源配置">
               <dynamic-form
                 ref="dynamicFormRef"
                 :options="jsonConfig"
@@ -68,11 +64,7 @@
                 @onChanged="(val) => dynamicFormChanged(val)"
               />
             </el-form-item>
-            <el-form-item
-              label="备注信息"
-              label-position="left"
-              prop="description"
-            >
+            <el-form-item label="备注信息" prop="description">
               <el-input
                 v-model="createForm.description"
                 autocomplete="off"
@@ -144,9 +136,9 @@
       <el-dialog
         title="输出目标详情"
         :visible.sync="status.detailDialogVisible"
-        width="900px"
+        width="500px"
       >
-        <el-descriptions border column="1" :label-style="LS">
+        <el-descriptions border :column="1" :label-style="LS">
           <el-descriptions-item label="type">
             <el-tag size="small">{{ inEndDetail.type }}</el-tag>
           </el-descriptions-item>
@@ -218,14 +210,14 @@ export default {
         { text: 'COAP 协议接入', value: 'COAP' },
         { text: 'GRPC 协议接入', value: 'GRPC' },
         { text: '通用串口接入', value: 'UART_MODULE' },
-        { text: 'MODBUS TCP MASTER 模式', value: 'MODBUS_TCP_MASTER' },
-        { text: 'MODBUS RTU MASTER 模式', value: 'MODBUS_RTU_MASTER' },
+        { text: 'MODBUS MASTER 模式', value: 'MODBUS_MASTER' },
         { text: 'SNMP 协议接入', value: 'SNMP_SERVER' }
       ],
 
       // 配置文件
       jsonConfig: [],
       tableData: [],
+      inEndDetail: {},
       protocol: '',
 
       status: {
@@ -233,20 +225,32 @@ export default {
         createDialogVisible: false,
         detailDialogVisible: false,
         configFormVisible: false
-      },
-
-      inEndDetail: {}
+      }
     }
   },
+
   created() {
     this.getList()
   },
+
   methods: {
+    getList() {
+      list().then((response) => {
+        this.tableData = response.data
+      })
+    },
+
     // 新建资源 》资源类型改变
     onSelectChange(v) {
-      this.protocol = v
-      this.jsonConfig = in_types[v]
-      this.status.configFormVisible = true
+      if (this.isEmpty(v)) {
+        this.protocol = ''
+        this.jsonConfig = []
+        this.status.configFormVisible = false
+      } else {
+        this.protocol = v
+        this.jsonConfig = in_types[v]
+        this.status.configFormVisible = true
+      }
     },
 
     // 新建资源 对话框关闭
@@ -261,29 +265,14 @@ export default {
       this.createForm.config = JSON.parse(JSON.stringify(val))
     },
 
-    isEmpty(obj) {
-      if (typeof obj === 'number' && !isNaN(obj)) {
-        return false
-      }
-      if (!obj) {
-        return true
-      }
-      return Object.keys(obj).length < 1
-    },
-
-    getList() {
-      list().then((response) => {
-        this.tableData = response.data
-      })
-    },
-
     createInEnd() {
       this.$refs.createFormRef.validate((valid) => {
         if (valid) {
           // 配置表单也验证通过才提交
-          const flag = this.$refs['dynamicFormRef'].validateForm()
+          const flag = this.$refs.dynamicFormRef.validateForm()
           if (flag) {
             var params = JSON.parse(JSON.stringify(this.createForm))
+            console.log(params)
             if (params.config.registerParams) {
               if (!this.isEmpty(params.config.moreRegisterParams)) {
                 const arr = [...params.config.moreRegisterParams]
@@ -299,13 +288,9 @@ export default {
                 params.config.registerParams = [...arr2]
               }
             }
-            if (params.type === 'MODBUS_TCP_MASTER') {
-              params.config.mode = 'TCP'
-            } else if (params.type === 'MODBUS_RTU_MASTER') {
-              params.config.mode = 'RTU'
-            }
             delete params.config.moreRegisterParams
             this.status.createLoading = true
+            console.log(params)
             create(params)
               .then((_response) => {
                 Message({
@@ -329,6 +314,23 @@ export default {
       })
     },
 
+    filterHandler(value, row) {
+      return row.type === value
+    },
+
+    filterState(value, row) {
+      return row.state === value
+    },
+
+    refreshList() {
+      this.getList()
+      Message({
+        message: '刷新成功',
+        type: 'success',
+        duration: 5 * 1000
+      })
+    },
+
     details(row) {
       this.inEndDetail = row
       this.status.detailDialogVisible = true
@@ -345,21 +347,14 @@ export default {
       })
     },
 
-    refreshList() {
-      this.getList()
-      Message({
-        message: '刷新成功',
-        type: 'success',
-        duration: 5 * 1000
-      })
-    },
-
-    filterHandler(value, row) {
-      return row.type === value
-    },
-
-    filterState(value, row) {
-      return row.state === value
+    isEmpty(obj) {
+      if (typeof obj === 'number' && !isNaN(obj)) {
+        return false
+      }
+      if (!obj) {
+        return true
+      }
+      return Object.keys(obj).length < 1
     }
   }
 }
