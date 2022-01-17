@@ -3,136 +3,105 @@
     <el-main>
       <el-card class="box-card">
         <div slot="header" class="clearfix">
-          <span> 输入资源管理</span>
+          <span>输入资源管理</span>
         </div>
         <el-button
           type="primary"
           icon="el-icon-help"
-          @click="
-            () => {
-              this.createDialogVisible = true;
-            }
-          "
-          >新 建</el-button
+          @click="status.createDialogVisible = true"
         >
-        <el-button type="success" @click="refreshList" icon="el-icon-refresh"
-          >刷 新</el-button
-        >
+          新 建
+        </el-button>
+        <el-button type="success" icon="el-icon-refresh" @click="refreshList">
+          刷 新
+        </el-button>
 
         <el-dialog
+          width="1100px"
           title="新建资源"
-          :visible.sync="createDialogVisible"
-          width="800px"
-          top="2%"
+          top="10vh"
           :show-close="false"
-          :before-close="() => {}"
+          :close-on-click-modal="false"
+          :visible.sync="status.createDialogVisible"
+          @closed="createDialogClosed"
         >
           <el-form
+            ref="createFormRef"
             :model="createForm"
-            status-icon
             :rules="createFormRules"
-            ref="createForm"
+            label-width="78px"
           >
-            <el-form-item
-              label="资源名称"
-              label-width="90px"
-              label-position="left"
-              prop="name"
-            >
-              <el-input v-model="createForm.name" placeholder="资源名称"></el-input>
+            <el-form-item label="资源名称" prop="name">
+              <el-input
+                v-model="createForm.name"
+                placeholder="资源名称"
+                maxlength="20"
+                clearable
+              />
             </el-form-item>
-            <el-form-item
-              label="资源类型"
-              label-width="90px"
-              label-position="left"
-              prop="type"
-            >
+            <el-form-item label="资源类型" prop="type">
               <el-select
                 v-model="createForm.type"
                 placeholder="资源类型"
                 filterable
-                style="width: 500px"
+                clearable
+                style="width: 100%"
                 @change="onSelectChange"
               >
-                <el-option label="MQTT 协议桥接" value="MQTT"></el-option>
-                <el-option label="HTTP 协议接入" value="HTTP"></el-option>
-                <el-option label="UDP 协议输入" value="UDP"></el-option>
-                <el-option label="COAP 协议接入" value="COAP"></el-option>
-                <el-option label="GRPC 协议接入" value="GRPC"></el-option>
-                <el-option label="通用串口接入" value="UART_MODULE"></el-option>
                 <el-option
-                  label="MODBUS TCP MASTER 模式"
-                  value="MODBUS_TCP_MASTER"
-                ></el-option>
-                <el-option
-                  label="MODBUS RTU MASTER 模式"
-                  value="MODBUS_RTU_MASTER"
-                ></el-option>
-                <el-option label="SNMP 协议接入" value="SNMP_SERVER"></el-option>
+                  v-for="(item, index) in protocolOptions"
+                  :key="index"
+                  :label="item.text"
+                  :value="item.value"
+                />
               </el-select>
             </el-form-item>
-            <el-form-item
-              label="资源配置"
-              label-width="90px"
-              label-position="left"
-              prop="config"
-            >
-              <v-jsoneditor
-                style="height: 400px"
-                v-model="createForm.config"
-                :options="options"
-              ></v-jsoneditor>
+            <el-form-item v-if="status.configFormVisible" label="资源配置">
+              <dynamic-form
+                ref="dynamicFormRef"
+                :options="jsonConfig"
+                :protocol="protocol"
+                @onChanged="(val) => dynamicFormChanged(val)"
+              />
             </el-form-item>
-
-            <el-form-item
-              label="备注信息"
-              label-width="90px"
-              label-position="left"
-              prop="description"
-            >
+            <el-form-item label="备注信息" prop="description">
               <el-input
                 v-model="createForm.description"
                 autocomplete="off"
                 placeholder="备注信息"
-              ></el-input>
+                maxlength="50"
+                clearable
+              />
             </el-form-item>
           </el-form>
           <div slot="footer" class="dialog-footer">
+            <el-button @click="status.createDialogVisible = false">
+              取 消
+            </el-button>
             <el-button
-              @click="
-                () => {
-                  this.createDialogVisible = false;
-                  this.createForm = {};
-                }
-              "
-              >取 消</el-button
+              type="primary"
+              :loading="status.createLoading"
+              @click="createInEnd"
             >
-            <el-button type="primary" @click="createInEnd">提 交</el-button>
+              提 交
+            </el-button>
           </div>
         </el-dialog>
       </el-card>
+
       <el-table :data="tableData" border style="width: 100%; margin-top: 10px">
-        <el-table-column prop="uuid" label="UUID" width="340px"> </el-table-column>
+        <el-table-column prop="uuid" label="UUID" width="340px" />
         <el-table-column
           prop="type"
           label="类型"
           width="200px"
-          :filters="[
-            { text: 'MQTT 协议桥接', value: 'MQTT' },
-            { text: 'HTTP 协议接入', value: 'HTTP' },
-            { text: 'UDP 协议输入', value: 'UDP' },
-            { text: 'COAP 协议接入', value: 'COAP' },
-            { text: 'GRPC 协议接入', value: 'GRPC' },
-            { text: '通用串口接入', value: 'UART_MODULE' },
-            { text: 'MODBUS TCP MASTER 模式', value: 'MODBUS_TCP_MASTER' },
-            { text: 'MODBUS RTU MASTER 模式', value: 'MODBUS_RTU_MASTER' },
-            { text: 'SNMP 协议接入', value: 'SNMP_SERVER' },
-          ]"
-          :filter-method="filterType"
-        >
-        </el-table-column>
-        <el-table-column prop="name" label="名称"> </el-table-column>
-        <el-table-column prop="description" label="信息"> </el-table-column>
+          :filters="protocolOptions"
+          :filter-method="filterHandler"
+          filter-placement="bottom-end"
+          :column-key="'type'"
+        />
+        <el-table-column prop="name" label="名称" />
+        <el-table-column prop="description" label="信息" />
         <el-table-column
           prop="state"
           label="状态"
@@ -150,33 +119,47 @@
         </el-table-column>
         <el-table-column fixed="right" label="操作" width="160">
           <template slot-scope="scope">
-            <el-button size="mini" type="primary" @click="details(scope.row)"
-              >详情</el-button
+            <el-button size="mini" type="primary" @click="details(scope.row)">
+              详情
+            </el-button>
+            <el-button
+              size="mini"
+              type="danger"
+              @click="removeInEnd(scope.row)"
             >
-            <el-button size="mini" type="danger" @click="removeInEnd(scope.row)"
-              >删除</el-button
-            >
+              删除
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
-      <el-dialog title="输出目标详情" :visible.sync="detailDialogVisible" width="30%">
-        <v-jsoneditor
-          style="height: 400px"
-          v-model="inEndDetail"
-          :options="detailOptions"
-        ></v-jsoneditor>
 
-        <span slot="footer" class="dialog-footer">
-          <el-button
-            type="primary"
-            @click="
-              () => {
-                detailDialogVisible = false;
-                inEndDetail = {};
-              }
-            "
-            >确 定</el-button
+      <el-dialog
+        title="输出目标详情"
+        :visible.sync="status.detailDialogVisible"
+        width="500px"
+      >
+        <el-descriptions border :column="1" :label-style="LS">
+          <el-descriptions-item label="type">
+            <el-tag size="small">{{ inEndDetail.type }}</el-tag>
+          </el-descriptions-item>
+          <el-descriptions-item label="name">
+            {{ inEndDetail.name }}
+          </el-descriptions-item>
+          <el-descriptions-item
+            v-for="(item, index) in inEndDetail.config"
+            :key="index"
+            :label="index"
           >
+            {{ item }}
+          </el-descriptions-item>
+          <el-descriptions-item label="description">
+            {{ inEndDetail.description }}
+          </el-descriptions-item>
+        </el-descriptions>
+        <span slot="footer">
+          <el-button type="primary" @click="status.detailDialogVisible = false">
+            确 定
+          </el-button>
         </span>
       </el-dialog>
     </el-main>
@@ -184,124 +167,196 @@
 </template>
 
 <script>
-import Vue from "vue";
-import VJsoneditor from "v-jsoneditor/src/index";
-import { list } from "@/api/inend";
-import { remove } from "@/api/inend";
-import { create } from "@/api/inend";
-import { Message } from "element-ui";
-import in_types from "./in_type";
-Vue.use(VJsoneditor);
+import { list } from '@/api/inend'
+import { remove } from '@/api/inend'
+import { create } from '@/api/inend'
+import { Message } from 'element-ui'
+import in_types from './in_type'
+import DynamicForm from '@/components/DynamicForm/index.vue'
 export default {
+  name: 'InEnd',
   components: {
-    VJsoneditor,
-  },
-  name: "InEnd",
-  methods: {
-    onSelectChange(v) {
-      this.createForm.config = in_types[v];
-    },
-    removeInEnd(row) {
-      let thiz = this;
-      remove(row.uuid).then((response) => {
-        Message({
-          message: response.msg,
-          type: "success",
-          duration: 5 * 1000,
-        });
-        thiz.getList();
-      });
-    },
-    details(row) {
-      this.inEndDetail = row;
-      this.detailDialogVisible = true;
-    },
-    refreshList() {
-      this.getList();
-      Message({
-        message: "刷新成功",
-        type: "success",
-        duration: 5 * 1000,
-      });
-    },
-    createInEnd() {
-      let thiz = this;
-      this.$refs["createForm"].validate((valid) => {
-        if (valid) {
-          create(this.createForm).then((_response) => {
-            Message({
-              message: "创建成功",
-              type: "success",
-              duration: 5 * 1000,
-            });
-            this.createDialogVisible = false;
-            this.createForm = {};
-            thiz.getList();
-          });
-          return true;
-        } else {
-          return false;
-        }
-      });
-    },
-    //
-    getList() {
-      list().then((response) => {
-        this.tableData = response.data;
-      });
-    },
-    //
-    filterType(value, row) {
-      return row.type === value;
-    },
-    //
-    filterState(value, row) {
-      return row.state === value;
-    },
-    //
-  },
-  created() {
-    this.getList();
+    DynamicForm
   },
   data() {
     return {
-      options: {
-        modes: ["tree", "code", "preview"],
-        mode: "code",
-        ace: ace,
-        templates: [],
+      LS: {
+        width: '120px'
       },
-      ///
-      detailOptions: {
-        modes: ["code"],
-        mode: "code",
-        ace: ace,
-      },
-      ///
-      detailDialogVisible: false,
-      inEndDetail: {},
-      //
-      createDialogVisible: false,
+
+      // 输入资源管理 新增、编辑
       createForm: {
-        type: null,
-        name: null,
-        description: null,
-        config: {
-          example_config_key: "example_config_value", //example
-        },
+        type: '',
+        name: '',
+        description: '',
+        config: {}
       },
-
       createFormRules: {
-        type: [{ required: true, message: "输入类型", trigger: ["blur", "change"] }],
-        name: [{ required: true, message: "输入名称", trigger: ["blur", "change"] }],
-        description: [
-          { required: true, message: "输入描述", trigger: ["blur", "change"] },
+        type: [
+          { required: true, message: '输入类型', trigger: ['blur', 'change'] }
         ],
-        config: [{ required: true, message: "输入配置", trigger: ["blur", "change"] }],
+        name: [
+          { required: true, message: '输入名称', trigger: ['blur', 'change'] }
+        ],
+        description: [
+          { required: true, message: '输入描述', trigger: ['blur', 'change'] }
+        ]
       },
 
+      protocolOptions: [
+        { text: 'MQTT 协议接入', value: 'MQTT' },
+        { text: 'HTTP 协议接入', value: 'HTTP' },
+        { text: 'UDP 协议接入', value: 'RULEX_UDP' },
+        { text: 'COAP 协议接入', value: 'COAP' },
+        { text: 'GRPC 协议接入', value: 'GRPC' },
+        { text: '通用串口接入', value: 'UART_MODULE' },
+        { text: 'MODBUS MASTER 模式', value: 'MODBUS_MASTER' },
+        { text: 'SNMP 协议接入', value: 'SNMP_SERVER' }
+      ],
+
+      // 配置文件
+      jsonConfig: [],
       tableData: [],
-    };
+      inEndDetail: {},
+      protocol: '',
+
+      status: {
+        createLoading: false,
+        createDialogVisible: false,
+        detailDialogVisible: false,
+        configFormVisible: false
+      }
+    }
   },
-};
+
+  created() {
+    this.getList()
+  },
+
+  methods: {
+    getList() {
+      list().then((response) => {
+        this.tableData = response.data
+      })
+    },
+
+    // 新建资源 》资源类型改变
+    onSelectChange(v) {
+      if (this.isEmpty(v)) {
+        this.protocol = ''
+        this.jsonConfig = []
+        this.status.configFormVisible = false
+      } else {
+        this.protocol = v
+        this.jsonConfig = in_types[v]
+        this.status.configFormVisible = true
+      }
+    },
+
+    // 新建资源 对话框关闭
+    createDialogClosed() {
+      this.status.configFormVisible = false
+      this.status.createLoading = false
+      this.$refs.createFormRef.resetFields()
+      this.createForm = this.$options.data().createForm
+    },
+
+    dynamicFormChanged(val) {
+      this.createForm.config = JSON.parse(JSON.stringify(val))
+    },
+
+    createInEnd() {
+      this.$refs.createFormRef.validate((valid) => {
+        if (valid) {
+          // 配置表单也验证通过才提交
+          const flag = this.$refs.dynamicFormRef.validateForm()
+          if (flag) {
+            var params = JSON.parse(JSON.stringify(this.createForm))
+            console.log(params)
+            if (params.config.registerParams) {
+              if (!this.isEmpty(params.config.moreRegisterParams)) {
+                const arr = [...params.config.moreRegisterParams]
+                const obj = { ...params.config.registerParams }
+                arr.push(obj)
+                delete params.config.registerParams
+                params.config.registerParams = arr
+              } else {
+                const arr2 = []
+                const obj2 = { ...params.config.registerParams }
+                arr2.push(obj2)
+                delete params.config.registerParams
+                params.config.registerParams = [...arr2]
+              }
+            }
+            delete params.config.moreRegisterParams
+            this.status.createLoading = true
+            console.log(params)
+            create(params)
+              .then((_response) => {
+                Message({
+                  message: '创建成功',
+                  type: 'success',
+                  duration: 5 * 1000
+                })
+                this.getList()
+                this.status.createDialogVisible = false
+              })
+              .catch(() => {
+                this.status.createLoading = false
+              })
+            return true
+          } else {
+            return false
+          }
+        } else {
+          return false
+        }
+      })
+    },
+
+    filterHandler(value, row) {
+      return row.type === value
+    },
+
+    filterState(value, row) {
+      return row.state === value
+    },
+
+    refreshList() {
+      this.getList()
+      Message({
+        message: '刷新成功',
+        type: 'success',
+        duration: 5 * 1000
+      })
+    },
+
+    details(row) {
+      this.inEndDetail = row
+      this.status.detailDialogVisible = true
+    },
+
+    removeInEnd(row) {
+      remove(row.uuid).then((response) => {
+        Message({
+          message: response.msg,
+          type: 'success',
+          duration: 5 * 1000
+        })
+        this.getList()
+      })
+    },
+
+    isEmpty(obj) {
+      if (typeof obj === 'number' && !isNaN(obj)) {
+        return false
+      }
+      if (!obj) {
+        return true
+      }
+      return Object.keys(obj).length < 1
+    }
+  }
+}
 </script>
+<style lang="less" scoped></style>
