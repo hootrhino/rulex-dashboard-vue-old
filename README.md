@@ -20,6 +20,8 @@ npm run build:stage
 # 构建生产环境
 npm run build:prod
 ```
+## CI
+TAG 满足 `Vx.y.z` 测试后，CI会自动发布版本.
 
 ## 其它
 

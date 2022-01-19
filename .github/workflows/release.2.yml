@@ -1,23 +1,16 @@
-# This workflow will do a clean install of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
-
-name: Node.js CI
-
+name: 发布版本
 on:
   push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+    tags:
+      - '^V([1-9]\d|[1-9])(\.([1-9]\d|\d)){2}$'
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
         node-version: [14.x, 16.x]
- 
+
     steps:
     - uses: actions/checkout@v2
     - name: Use Node.js ${{ matrix.node-version }}
@@ -26,6 +19,16 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     - run: |
+        sudo apt install zip unzip -y
         sudo npm install -g @vue/cli
         npm install
-        npm run build:prod
+        ./bash ./release.sh
+
+    - name: 上传发布包
+      uses: svenstaro/upload-release-action@v2
+      with:
+        repo_token: ${{ secrets.TOKEN }}
+        file: ./_release/*.zip
+        tag: ${{ github.ref }}
+        overwrite: true
+        file_glob: true
