@@ -51,6 +51,7 @@
                 <el-option label="MQTT 桥接" value="MQTT" />
                 <el-option label="MQTT 遥测" value="MQTT_TELEMETRY_TARGET" />
                 <el-option label="MONGO 单节点" value="MONGO_SINGLE" />
+                <el-option label="TdEngine" value="TDENGINE" />
               </el-select>
             </el-form-item>
             <el-form-item v-if="status.configFormVisible" label="目标配置">
@@ -100,6 +101,7 @@
             { text: 'MQTT 协议桥接', value: 'MQTT' },
             { text: 'MQTT 遥测', value: 'MQTT_TELEMETRY_TARGET' },
             { text: 'MongoDb 存储', value: 'MONGO_SINGLE' },
+            { text: 'TdEngine', value: 'TDENGINE' },
           ]"
           :filter-method="filterType"
         />
@@ -139,7 +141,7 @@
       <el-dialog
         title="输出目标详情"
         :visible.sync="status.detailDialogVisible"
-        width="500px"
+        width="800px"
       >
         <el-descriptions border :column="1" :label-style="LS">
           <el-descriptions-item label="type">

@@ -27,7 +27,7 @@
             size="small"
             :placeholder="item.placeholder"
             clearable
-            maxlength="20"
+            maxlength="100"
             @change="changed($event, item.name)"
           />
           <el-input-number
@@ -134,7 +134,7 @@
           <el-form-item
             label="功能代码"
             :prop="'moreRegisterParams.' + index + '.function'"
-            :rules="[{ required: true, message: '111', trigger: 'blur' }]"
+            :rules="[{ required: true, message: `请输入${configForm.mode}`, trigger: 'blur' }]"
           >
             <el-input-number
               v-model="item.function"
@@ -231,7 +231,6 @@ export default {
   created() {
     this.options_ = this.options
     this.initModbus()
-    console.log(1111)
   },
 
   methods: {

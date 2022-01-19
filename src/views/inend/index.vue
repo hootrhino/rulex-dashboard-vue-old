@@ -136,7 +136,7 @@
       <el-dialog
         title="输出目标详情"
         :visible.sync="status.detailDialogVisible"
-        width="500px"
+        width="800px"
       >
         <el-descriptions border :column="1" :label-style="LS">
           <el-descriptions-item label="type">
