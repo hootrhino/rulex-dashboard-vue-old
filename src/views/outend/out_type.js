@@ -183,6 +183,75 @@ const out_types = {
     // mongoUrl: "mongodb://user:password@127.0.0.1:27017/?authSource=admin",
     // database: "rulex",
     // collection: "rulex_data",
+  ],
+
+  TDENGINE: [
+    {
+      type: 'el-input-text',
+      name: 'fqdn',
+      label: '服务地址',
+      value: '127.0.0.1',
+      required: true,
+      placeholder: '127.0.0.1'
+    },
+    {
+      type: 'el-input-number',
+      name: 'port',
+      label: '服务端口',
+      value: 4400,
+      required: true,
+      placeholder: '4400'
+    },
+    {
+      type: 'el-input-text',
+      name: 'username',
+      label: '用户',
+      value: 'root',
+      required: true,
+      placeholder: 'root'
+    },
+    {
+      type: 'el-input-text',
+      name: 'password',
+      label: '密码',
+      value: 'taosdata',
+      required: true,
+      placeholder: 'taosdata'
+    },
+    {
+      type: 'el-input-text',
+      name: 'dbName',
+      label: '数据库名',
+      value: 'device',
+      required: true,
+      placeholder: 'device'
+    },
+    {
+      type: 'el-input-text',
+      name: 'createDbSql',
+      label: '建库SQL',
+      value: 'CREATE DATABASE IF NOT EXISTS device UPDATE 0;',
+      required: true,
+      placeholder: 'CREATE DATABASE IF NOT EXISTS device UPDATE 0;'
+    },
+    {
+      type: 'el-input-text',
+      name: 'createTableSql',
+      label: '建表SQL',
+      value:
+        'CREATE TABLE IF NOT EXISTS meter (ts TIMESTAMP, current FLOAT, valtage FLOAT);',
+      required: true,
+      placeholder:
+        'CREATE TABLE IF NOT EXISTS meter (ts TIMESTAMP, current FLOAT, valtage FLOAT);'
+    },
+    {
+      type: 'el-input-text',
+      name: 'insertSql',
+      label: '插入SQL',
+      value: 'INSERT INTO meter VALUES (NOW, %v, %v);',
+      required: true,
+      placeholder: 'INSERT INTO meter VALUES (NOW, %v, %v);'
+    }
   ]
 }
 export default out_types

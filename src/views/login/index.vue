@@ -5,7 +5,7 @@
         <div class="login-title">RULEX</div>
       </div>
       <div class="login-box-right">
-        <canvas id="myCanvas" width="200" height="200"></canvas>
+        <canvas id="myCanvas" width="200" height="200" />
         <el-form
           ref="loginFormRef"
           :model="loginForm"
@@ -43,116 +43,116 @@
       </div>
     </div>
     <ul class="w3lsg-bubbles">
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
+      <li />
+      <li />
+      <li />
+      <li />
+      <li />
+      <li />
+      <li />
+      <li />
+      <li />
+      <li />
     </ul>
   </div>
 </template>
 
 <script>
 export default {
-  name: "Login",
+  name: 'Login',
   data() {
     return {
       loginForm: {
-        username: "rulex",
-        password: "rulex",
+        username: '',
+        password: ''
       },
       loginFormRules: {
         username: [
           {
             required: true,
-            trigger: "blur",
-            message: "Please enter user name",
+            trigger: 'blur',
+            message: 'Please enter user name'
           },
           {
             min: 5,
             max: 10,
-            trigger: "blur",
-            message: "Please enter the correct user name",
-          },
+            trigger: 'blur',
+            message: 'Please enter the correct user name'
+          }
         ],
         password: [
           {
             required: true,
-            trigger: "blur",
-            message: "Please enter password",
+            trigger: 'blur',
+            message: 'Please enter password'
           },
           {
             min: 5,
             max: 16,
-            trigger: "blur",
-            message: "The password can not be less than 6 digits",
-          },
-        ],
+            trigger: 'blur',
+            message: 'The password can not be less than 6 digits'
+          }
+        ]
       },
       loading: false,
-      redirect: undefined,
-    };
+      redirect: undefined
+    }
   },
 
   watch: {
     $route: {
-      handler: function (route) {
-        this.redirect = route.query && route.query.redirect;
+      handler: function(route) {
+        this.redirect = route.query && route.query.redirect
       },
-      immediate: true,
-    },
+      immediate: true
+    }
   },
 
   mounted() {
-    this.initLogo();
+    this.initLogo()
   },
 
   methods: {
     initLogo() {
-      var c = document.getElementById("myCanvas");
-      var ctx = c.getContext("2d");
-      ctx.lineWidth = 0;
-      ctx.beginPath();
-      ctx.arc(100, 100, 50, 0, 2 * Math.PI);
-      ctx.strokeStyle = "#00BFFF";
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.arc(100, 100, 20, 0, 2 * Math.PI);
-      ctx.fillStyle = "#00BFFF";
-      ctx.fill();
-      ctx.strokeStyle = "#00BFFF";
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.arc(70, 60, 10, 0, 2 * Math.PI);
-      ctx.fillStyle = "#00BFFF";
-      ctx.fill();
-      ctx.strokeStyle = "#00BFFF";
-      ctx.stroke();
+      var c = document.getElementById('myCanvas')
+      var ctx = c.getContext('2d')
+      ctx.lineWidth = 0
+      ctx.beginPath()
+      ctx.arc(100, 100, 50, 0, 2 * Math.PI)
+      ctx.strokeStyle = '#00BFFF'
+      ctx.stroke()
+      ctx.beginPath()
+      ctx.arc(100, 100, 20, 0, 2 * Math.PI)
+      ctx.fillStyle = '#00BFFF'
+      ctx.fill()
+      ctx.strokeStyle = '#00BFFF'
+      ctx.stroke()
+      ctx.beginPath()
+      ctx.arc(70, 60, 10, 0, 2 * Math.PI)
+      ctx.fillStyle = '#00BFFF'
+      ctx.fill()
+      ctx.strokeStyle = '#00BFFF'
+      ctx.stroke()
     },
 
     handleLogin() {
       this.$refs.loginFormRef.validate((valid) => {
         if (valid) {
-          this.loading = true;
+          this.loading = true
           this.$store
-            .dispatch("user/login", this.loginForm)
+            .dispatch('user/login', this.loginForm)
             .then(() => {
-              this.$router.push({ path: this.redirect || "/" });
-              this.loading = false;
+              this.$router.push({ path: this.redirect || '/' })
+              this.loading = false
             })
             .catch(() => {
-              this.loading = false;
-            });
+              this.loading = false
+            })
         }
-      });
-    },
-  },
-};
+      })
+    }
+  }
+}
 </script>
 
 <style lang="less" scoped>
