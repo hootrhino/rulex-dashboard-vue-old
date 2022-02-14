@@ -187,7 +187,7 @@ export default {
   data() {
     return {
       LS: {
-        width: '120px'
+        width: '200px'
       },
 
       createForm: {
