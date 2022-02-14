@@ -1,4 +1,128 @@
 const in_types = {
+  //
+  // 西门子S7
+  //
+  SEMENS_S7: [
+
+    {
+      type: 'el-input-text',
+      name: 'host',
+      label: '服务地址',
+      value: '127.0.0.1:1502',
+      required: true,
+      placeholder: '127.0.0.1:1502'
+    },
+    {
+      type: 'el-input-number',
+      name: 'rack',
+      label: '机架编号',
+      value: 0,
+      required: true,
+      placeholder: '0'
+    },
+    {
+      type: 'el-input-number',
+      name: 'slot',
+      label: '插槽编号',
+      value: 1,
+      required: true,
+      placeholder: '1'
+    },
+    {
+      type: 'el-input-number',
+      name: 'timeout',
+      label: '超时时间',
+      value: 10,
+      required: true,
+      placeholder: '10'
+    },
+    {
+      type: 'el-input-number',
+      name: 'idleTimeout',
+      label: '心跳时间',
+      value: 60,
+      required: true,
+      placeholder: '60'
+    },
+    {
+      type: 'el-input-number',
+      name: 'frequency',
+      label: '采集频率',
+      value: 5,
+      required: true,
+      placeholder: '5'
+    },
+    {
+      type: 'el-inline',
+      label: '状态参数',
+      name: 'stateAddress',
+      children: [
+        {
+          type: 'el-input-number',
+          name: 'address',
+          label: '地址编号',
+          value: 0,
+          required: true,
+          placeholder: '0'
+        },
+        {
+          type: 'el-input-number',
+          name: 'start',
+          label: '起始地址',
+          value: 1,
+          required: true,
+          placeholder: '1'
+        },
+        {
+          type: 'el-input-number',
+          name: 'size',
+          label: '读取数量',
+          value: 1,
+          required: true,
+          placeholder: '1'
+        }
+      ]
+    },
+    {
+      type: 'el-inline',
+      label: '注册参数',
+      name: 'registerParams',
+      children: [
+        {
+          type: 'el-input-text',
+          name: 'tag',
+          label: '数据标签',
+          value: 'A',
+          required: true,
+          placeholder: 'A'
+        },
+        {
+          type: 'el-input-number',
+          name: 'address',
+          label: '地址编号',
+          value: 0,
+          required: true,
+          placeholder: '0'
+        },
+        {
+          type: 'el-input-number',
+          name: 'start',
+          label: '起始地址',
+          value: 1,
+          required: true,
+          placeholder: '1'
+        },
+        {
+          type: 'el-input-number',
+          name: 'size',
+          label: '读取数量',
+          value: 1,
+          required: true,
+          placeholder: '1'
+        }
+      ]
+    }
+  ],
   MQTT: [
     {
       type: 'el-input-text',
@@ -203,6 +327,7 @@ const in_types = {
       ]
     }
   ],
+
 
   SNMP_SERVER: [
     {
@@ -522,6 +647,8 @@ const in_types = {
         }
       ]
     }
+
   ]
 }
+
 export default in_types
