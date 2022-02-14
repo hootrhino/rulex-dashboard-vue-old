@@ -309,7 +309,7 @@ const in_types = {
     {
       type: 'el-input-number',
       name: 'timeout',
-      label: '超时',
+      label: '超时时长',
       value: 5,
       required: true,
       placeholder: '5'
@@ -361,7 +361,7 @@ const in_types = {
         {
           type: 'el-input-text',
           name: 'tag',
-          label: '标签',
+          label: '数据标签',
           value: 'A',
           required: true,
           placeholder: 'A'
@@ -370,9 +370,9 @@ const in_types = {
           type: 'el-input-number',
           name: 'function',
           label: '功能代码',
-          value: 3,
+          value: 1,
           required: true,
-          placeholder: '3'
+          placeholder: '1'
         },
         {
           type: 'el-input-number',
@@ -491,7 +491,7 @@ const in_types = {
         {
           type: 'el-input-text',
           name: 'tag',
-          label: '标签',
+          label: '数据标签',
           value: 'A',
           required: true,
           placeholder: 'A'
@@ -500,9 +500,9 @@ const in_types = {
           type: 'el-input-number',
           name: 'function',
           label: 'Modbus 功能',
-          value: 3,
+          value: 1,
           required: true,
-          placeholder: '3'
+          placeholder: '1'
         },
         {
           type: 'el-input-number',
