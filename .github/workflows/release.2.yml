@@ -27,7 +27,7 @@ jobs:
     - name: 上传发布包
       uses: svenstaro/upload-release-action@v2
       with:
-        repo_token: ${{ secrets.TOKEN }}
+        repo_token: ${{ secrets.RULEXDASHBOARD }}
         file: ./_release/*.zip
         tag: ${{ github.ref }}
         overwrite: true
