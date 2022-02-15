@@ -7,8 +7,8 @@ build() {
         mkdir -p ./_release/
     fi
     npm run build:prod
-    zip -r www-$1.zip ./dist
-    mv ./www-$1.zip ./_release
+    zip -r $1.zip ./dist
+    mv ./$1.zip ./_release
 
 }
 #-------------------------------------------------------
