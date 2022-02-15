@@ -22,7 +22,7 @@ jobs:
         sudo apt install zip unzip -y
         sudo npm install -g @vue/cli
         npm install
-        ./bash ./release.sh
+        bash ./release.sh
 
     - name: 上传发布包
       uses: svenstaro/upload-release-action@v2
