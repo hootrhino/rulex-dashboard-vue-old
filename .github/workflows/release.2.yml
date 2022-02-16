@@ -2,7 +2,7 @@ name: 发布版本
 on:
   push:
     tags:
-      - '^V([1-9]\d|[1-9])(\.([1-9]\d|\d)){2}$'
+      - 'V*'
 
 jobs:
   build:
@@ -22,12 +22,12 @@ jobs:
         sudo apt install zip unzip -y
         sudo npm install -g @vue/cli
         npm install
-        ./bash ./release.sh
+        bash ./release.sh
 
     - name: 上传发布包
       uses: svenstaro/upload-release-action@v2
       with:
-        repo_token: ${{ secrets.TOKEN }}
+        repo_token: ${{ secrets.RULEXDASHBOARD }}
         file: ./_release/*.zip
         tag: ${{ github.ref }}
         overwrite: true
