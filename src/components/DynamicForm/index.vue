@@ -1,15 +1,9 @@
 <template>
   <div class="dynamic-form">
-    <el-form
-      ref="configFormRef"
-      :model="configForm"
-      label-width="auto"
-      label-position="left"
-    >
-      <template v-for="item in options_">
+    <el-form ref="configFormRef" :model="configForm" label-width="auto">
+      <div v-for="(item, index) in options_" :key="index">
         <el-form-item
-          v-if="item.type !== 'el-inline'"
-          :key="item.name"
+          v-if="item.type !== 'el-inline' && item.type !== 'flag'"
           :label="item.label"
           :prop="item.name"
           :rules="[
@@ -111,95 +105,27 @@
             </el-form-item>
           </el-col>
         </el-row>
-      </template>
 
-      <!-- 动态增加项目 注册参数 -->
-      <el-row
-        v-for="(item, index) in configForm.moreRegisterParams"
-        :key="index"
-        :gutter="10"
-      >
-        <el-col :span="6">
-          <el-form-item
-            label="标签"
-            :prop="'moreRegisterParams.' + index + '.tag'"
-            :rules="[
-              { required: true, message: '请输入标签', trigger: 'blur' },
-            ]"
-          >
-            <el-input v-model="item.tag" size="small" clearable />
-          </el-form-item>
-        </el-col>
-        <el-col :span="6">
-          <el-form-item
-            label="功能代码"
-            :prop="'moreRegisterParams.' + index + '.function'"
-            :rules="[{ required: true, message: `请输入${configForm.mode}`, trigger: 'blur' }]"
-          >
-            <el-input-number
-              v-model="item.function"
-              size="small"
-              controls-position="right"
-              style="width: 100%"
-              clearable
-            />
-          </el-form-item>
-        </el-col>
-        <el-col :span="6">
-          <el-form-item
-            label="起始地址"
-            :prop="'moreRegisterParams.' + index + '.address'"
-            :rules="[
-              { required: true, message: '请输入起始地址', trigger: 'blur' },
-            ]"
-          >
-            <el-input-number
-              v-model="item.address"
-              size="small"
-              controls-position="right"
-              style="width: 100%"
-              clearable
-            />
-          </el-form-item>
-        </el-col>
-        <el-col :span="5">
-          <el-form-item
-            label="读取数量"
-            :prop="'moreRegisterParams.' + index + '.quantity'"
-            :rules="[
-              { required: true, message: '请输入读取数量', trigger: 'blur' },
-            ]"
-          >
-            <el-input-number
-              v-model="item.quantity"
-              size="small"
-              controls-position="right"
-              style="width: 100%"
-              clearable
-            />
-          </el-form-item>
-        </el-col>
-        <el-col :span="1" class="delete-icon">
-          <i
-            class="el-icon-delete"
-            style="cursor: pointer"
-            @click="deleteRegisterParams(item, index)"
-          />
-        </el-col>
-      </el-row>
-
-      <el-form-item v-if="!isEmpty(configForm.mode)" class="button-item">
-        <el-button type="primary" size="small" @click="addRegisterParams">
-          增加参数
-        </el-button>
-      </el-form-item>
+        <dynamic-params
+          v-if="item.type == 'dynamicParams'"
+          ref="dynamicParamsRef"
+          v-model="configForm[item.name]"
+          :dynparams="item"
+          @childChanged="(val) => dynamicParamsChanged(val)"
+        />
+      </div>
     </el-form>
   </div>
 </template>
 
 <script>
 import in_types from './../../views/inend/in_type'
+import dynamicParams from '@/components/DynamicParams/index.vue'
 export default {
+  name: 'DynamicForm',
+  components: {
+    dynamicParams
+  },
   props: {
     options: {
       type: Array,
@@ -209,13 +135,11 @@ export default {
   data() {
     return {
       configForm: {
-        moreRegisterParams: []
+        registerParams: []
       },
       options_: [],
       tcpConfig: [],
-      rtuConfig: [],
-      mergeTcpConfig: [],
-      mergeRtuConfig: []
+      rtuConfig: []
     }
   },
 
@@ -237,7 +161,7 @@ export default {
     // 赋初值
     setDefaultValue() {
       this.configForm = {
-        moreRegisterParams: []
+        registerParams: []
       }
       if (this.options_ && this.options_.length > 0) {
         this.options_.forEach((item1, index1) => {
@@ -262,61 +186,18 @@ export default {
       this.rtuConfig = in_types['RTU']
     },
 
-    // 新增注册参数
-    addRegisterParams() {
-      this.configForm.moreRegisterParams.push({
-        tag: '',
-        function: 3,
-        address: 0,
-        quantity: 10
-      })
-    },
-
-    deleteRegisterParams(item, index) {
-      this.configForm.moreRegisterParams.splice(index, 1)
-    },
-
     // 校验数据
     validateForm() {
       let flag = null
       this.$refs.configFormRef.validate((valid) => {
         if (valid) {
-          flag = true
-          // 将值回传
           this.$emit('onChanged', this.configForm)
+          flag = true
         } else {
           flag = false
         }
       })
       return flag
-    },
-
-    calcSpan(e) {
-      let colSpan = 24
-      switch (e.length) {
-        case 2:
-          colSpan = 12
-          break
-        case 3:
-          colSpan = 8
-          break
-        case 4:
-          colSpan = 6
-          break
-        default:
-          colSpan = 24
-      }
-      return colSpan
-    },
-
-    isEmpty(obj) {
-      if (typeof obj === 'number' && !isNaN(obj)) {
-        return false
-      }
-      if (!obj) {
-        return true
-      }
-      return Object.keys(obj).length < 1
     },
 
     // 对象深拷贝
@@ -376,6 +257,28 @@ export default {
       return map[toString.call(obj)]
     },
 
+    dynamicParamsChanged(val) {
+      this.configForm.registerParams = JSON.parse(JSON.stringify(val))
+    },
+
+    calcSpan(e) {
+      let colSpan = 24
+      switch (e.length) {
+        case 2:
+          colSpan = 12
+          break
+        case 3:
+          colSpan = 8
+          break
+        case 4:
+          colSpan = 6
+          break
+        default:
+          colSpan = 24
+      }
+      return colSpan
+    },
+
     changed(val, key) {
       if (val === 'TCP') {
         this.options_ = this.tcpConfig
@@ -409,6 +312,9 @@ export default {
   }
   /deep/ .el-form-item__error {
     padding-top: 0;
+  }
+  /deep/ .el-form--label-top .el-form-item__label {
+    padding: 0;
   }
   .delete-icon {
     text-align: center;

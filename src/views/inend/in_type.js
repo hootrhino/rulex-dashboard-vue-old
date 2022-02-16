@@ -1,9 +1,6 @@
 const in_types = {
-  //
   // 西门子S7
-  //
   SEMENS_S7: [
-
     {
       type: 'el-input-text',
       name: 'host',
@@ -56,6 +53,7 @@ const in_types = {
       type: 'el-inline',
       label: '状态参数',
       name: 'stateAddress',
+      required: false,
       children: [
         {
           type: 'el-input-number',
@@ -84,9 +82,10 @@ const in_types = {
       ]
     },
     {
-      type: 'el-inline',
+      type: 'dynamicParams',
       label: '注册参数',
       name: 'registerParams',
+      required: false,
       children: [
         {
           type: 'el-input-text',
@@ -121,8 +120,17 @@ const in_types = {
           placeholder: '1'
         }
       ]
+    },
+    {
+      type: 'flag',
+      name: 'isDynamic',
+      label: '是否动态',
+      value: '1',
+      required: false,
+      placeholder: '1'
     }
   ],
+
   MQTT: [
     {
       type: 'el-input-text',
@@ -171,6 +179,14 @@ const in_types = {
       value: '',
       required: true,
       placeholder: 'rulex-1'
+    },
+    {
+      type: 'flag',
+      name: 'isDynamic',
+      label: '是否动态',
+      value: '0',
+      required: false,
+      placeholder: '0'
     }
     // label: "MQTT桥接",
     // host: "127.0.0.1",
@@ -189,6 +205,14 @@ const in_types = {
       value: 2581,
       required: true,
       placeholder: '2581'
+    },
+    {
+      type: 'flag',
+      name: 'isDynamic',
+      label: '是否动态',
+      value: '0',
+      required: false,
+      placeholder: '0'
     }
     // label: 'HTTP桥接',
     // port: 2581
@@ -218,6 +242,14 @@ const in_types = {
       value: 1024,
       required: true,
       placeholder: '1024'
+    },
+    {
+      type: 'flag',
+      name: 'isDynamic',
+      label: '是否动态',
+      value: '0',
+      required: false,
+      placeholder: '0'
     }
     // label: 'UDP桥接',
     // port: 2582
@@ -232,6 +264,14 @@ const in_types = {
       placeholder: '2583',
       required: true,
       value: 2583
+    },
+    {
+      type: 'flag',
+      name: 'isDynamic',
+      label: '是否动态',
+      value: '0',
+      required: false,
+      placeholder: '0'
     }
     // label: 'COAP桥接',
     // port: 2583
@@ -245,6 +285,14 @@ const in_types = {
       value: 2584,
       required: true,
       placeholder: '2584'
+    },
+    {
+      type: 'flag',
+      name: 'isDynamic',
+      label: '是否动态',
+      value: '0',
+      required: false,
+      placeholder: '0'
     }
     // label: 'GRPC桥接',
     // port: 2584
@@ -303,6 +351,14 @@ const in_types = {
       value: 1,
       required: true,
       placeholder: '1'
+    },
+    {
+      type: 'flag',
+      name: 'isDynamic',
+      label: '是否动态',
+      value: '0',
+      required: false,
+      placeholder: '0'
     }
     // label: '通用串口',
     // address: 'uart1',
@@ -325,9 +381,16 @@ const in_types = {
         { value: 'TCP', label: 'TCP' },
         { value: 'RTU', label: 'RTU' }
       ]
+    },
+    {
+      type: 'flag',
+      name: 'isDynamic',
+      label: '是否动态',
+      value: '0',
+      required: false,
+      placeholder: '0'
     }
   ],
-
 
   SNMP_SERVER: [
     {
@@ -401,8 +464,15 @@ const in_types = {
           placeholder: ''
         }
       ]
+    },
+    {
+      type: 'flag',
+      name: 'isDynamic',
+      label: '是否动态',
+      value: '0',
+      required: false,
+      placeholder: '0'
     }
-
     // label: "SNMP协议",
     // frequency: 5,
     // timeout: 3,
@@ -479,9 +549,10 @@ const in_types = {
       ]
     },
     {
-      type: 'el-inline',
+      type: 'dynamicParams',
       label: '注册参数',
       name: 'registerParams',
+      required: false,
       children: [
         {
           type: 'el-input-text',
@@ -516,6 +587,14 @@ const in_types = {
           placeholder: '10'
         }
       ]
+    },
+    {
+      type: 'flag',
+      name: 'isDynamic',
+      label: '是否动态',
+      value: '1',
+      required: false,
+      placeholder: '1'
     }
   ],
 
@@ -609,8 +688,9 @@ const in_types = {
       ]
     },
     {
-      type: 'el-inline',
+      type: 'dynamicParams',
       label: '注册参数',
+      required: false,
       name: 'registerParams',
       children: [
         {
@@ -646,8 +726,15 @@ const in_types = {
           placeholder: '10'
         }
       ]
+    },
+    {
+      type: 'flag',
+      name: 'isDynamic',
+      label: '是否动态',
+      value: '1',
+      required: false,
+      placeholder: '1'
     }
-
   ]
 }
 
