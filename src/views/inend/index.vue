@@ -211,7 +211,7 @@ export default {
         { text: "通用串口接入", value: "UART_MODULE" },
         { text: "MODBUS MASTER 模式", value: "MODBUS_MASTER" },
         { text: "SNMP 协议接入", value: "SNMP_SERVER" },
-        { text: "西门子S7系列接入", value: "SEMENS_S7" },
+        { text: "西门子S7系列接入", value: "SIEMENS_S7" },
       ],
 
       // 配置文件
