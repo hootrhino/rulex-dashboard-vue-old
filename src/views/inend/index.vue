@@ -20,7 +20,6 @@
           width="1100px"
           title="新建资源"
           top="10vh"
-          :show-close="false"
           :close-on-click-modal="false"
           :visible.sync="status.createDialogVisible"
           @closed="createDialogClosed"
@@ -29,7 +28,7 @@
             ref="createFormRef"
             :model="createForm"
             :rules="createFormRules"
-            label-width="78px"
+            label-width="auto"
           >
             <el-form-item label="资源名称" prop="name">
               <el-input
@@ -60,7 +59,6 @@
               <dynamic-form
                 ref="dynamicFormRef"
                 :options="jsonConfig"
-                :protocol="protocol"
                 @onChanged="(val) => dynamicFormChanged(val)"
               />
             </el-form-item>
@@ -75,7 +73,9 @@
             </el-form-item>
           </el-form>
           <div slot="footer" class="dialog-footer">
-            <el-button @click="status.createDialogVisible = false"> 取 消 </el-button>
+            <el-button @click="status.createDialogVisible = false">
+              取 消
+            </el-button>
             <el-button
               type="primary"
               :loading="status.createLoading"
@@ -120,7 +120,11 @@
             <el-button size="mini" type="primary" @click="details(scope.row)">
               详情
             </el-button>
-            <el-button size="mini" type="danger" @click="removeInEnd(scope.row)">
+            <el-button
+              size="mini"
+              type="danger"
+              @click="removeInEnd(scope.row)"
+            >
               删除
             </el-button>
           </template>
@@ -161,36 +165,41 @@
 </template>
 
 <script>
-import { list } from "@/api/inend";
-import { remove } from "@/api/inend";
-import { create } from "@/api/inend";
-import { Message } from "element-ui";
-import in_types from "./in_type";
-import DynamicForm from "@/components/DynamicForm/index.vue";
+import { list } from '@/api/inend'
+import { remove } from '@/api/inend'
+import { create } from '@/api/inend'
+import { Message } from 'element-ui'
+import in_types from './in_type'
+import DynamicForm from '@/components/DynamicForm/index.vue'
 export default {
-  name: "InEnd",
+  name: 'InEnd',
   components: {
-    DynamicForm,
+    DynamicForm
   },
   data() {
     return {
       LS: {
-        width: "200px",
+        width: '200px'
       },
 
       // 输入资源管理 新增、编辑
       createForm: {
-        type: "",
-        name: "",
-        description: "",
-        config: {},
+        type: '',
+        name: '',
+        description: '',
+        config: {}
       },
+
       createFormRules: {
-        type: [{ required: true, message: "输入类型", trigger: ["blur", "change"] }],
-        name: [{ required: true, message: "输入名称", trigger: ["blur", "change"] }],
-        description: [
-          { required: true, message: "输入描述", trigger: ["blur", "change"] },
+        type: [
+          { required: true, message: '输入类型', trigger: ['blur', 'change'] }
         ],
+        name: [
+          { required: true, message: '输入名称', trigger: ['blur', 'change'] }
+        ],
+        description: [
+          { required: true, message: '输入描述', trigger: ['blur', 'change'] }
+        ]
       },
 
       protocolOptions: [
@@ -209,145 +218,126 @@ export default {
       jsonConfig: [],
       tableData: [],
       inEndDetail: {},
-      protocol: "",
-
+      protocol: '',
       status: {
         createLoading: false,
         createDialogVisible: false,
         detailDialogVisible: false,
-        configFormVisible: false,
-      },
-    };
+        configFormVisible: false
+      }
+    }
   },
 
   created() {
-    this.getList();
+    this.getList()
   },
 
   methods: {
     getList() {
       list().then((response) => {
-        this.tableData = response.data;
-      });
+        this.tableData = response.data
+      })
     },
 
     // 新建资源 》资源类型改变
     onSelectChange(v) {
       if (this.isEmpty(v)) {
-        this.protocol = "";
-        this.jsonConfig = [];
-        this.status.configFormVisible = false;
+        this.protocol = ''
+        this.jsonConfig = []
+        this.status.configFormVisible = false
       } else {
-        this.protocol = v;
-        this.jsonConfig = in_types[v];
-        this.status.configFormVisible = true;
+        this.protocol = v
+        this.jsonConfig = in_types[v]
+        this.status.configFormVisible = true
       }
     },
 
     // 新建资源 对话框关闭
     createDialogClosed() {
-      this.status.configFormVisible = false;
-      this.status.createLoading = false;
-      this.$refs.createFormRef.resetFields();
-      this.createForm = this.$options.data().createForm;
+      this.status.configFormVisible = false
+      this.status.createLoading = false
+      this.$refs.createFormRef.resetFields()
+      this.createForm = this.$options.data().createForm
     },
 
     dynamicFormChanged(val) {
-      this.createForm.config = JSON.parse(JSON.stringify(val));
+      this.createForm.config = JSON.parse(JSON.stringify(val))
     },
 
     createInEnd() {
       this.$refs.createFormRef.validate((valid) => {
         if (valid) {
           // 配置表单也验证通过才提交
-          const flag = this.$refs.dynamicFormRef.validateForm();
+          const flag = this.$refs.dynamicFormRef.validateForm()
           if (flag) {
-            var params = JSON.parse(JSON.stringify(this.createForm));
-            console.log(params);
-            if (params.config.registerParams) {
-              if (!this.isEmpty(params.config.moreRegisterParams)) {
-                const arr = [...params.config.moreRegisterParams];
-                const obj = { ...params.config.registerParams };
-                arr.push(obj);
-                delete params.config.registerParams;
-                params.config.registerParams = arr;
-              } else {
-                const arr2 = [];
-                const obj2 = { ...params.config.registerParams };
-                arr2.push(obj2);
-                delete params.config.registerParams;
-                params.config.registerParams = [...arr2];
-              }
-            }
-            delete params.config.moreRegisterParams;
-            this.status.createLoading = true;
-            console.log(params);
+            var params = JSON.parse(JSON.stringify(this.createForm))
+            this.status.createLoading = true
             create(params)
               .then((_response) => {
                 Message({
-                  message: "创建成功",
-                  type: "success",
-                  duration: 5 * 1000,
-                });
-                this.getList();
-                this.status.createDialogVisible = false;
+                  message: '创建成功',
+                  type: 'success',
+                  duration: 5 * 1000
+                })
+                this.getList()
+                this.status.createDialogVisible = false
               })
               .catch(() => {
-                this.status.createLoading = false;
-              });
-            return true;
+                this.status.createLoading = false
+              })
+            return true
           } else {
-            return false;
+            return false
           }
         } else {
-          return false;
+          return false
         }
-      });
+      })
     },
 
     filterHandler(value, row) {
-      return row.type === value;
+      return row.type === value
     },
 
     filterState(value, row) {
-      return row.state === value;
+      return row.state === value
     },
 
     refreshList() {
-      this.getList();
+      this.getList()
       Message({
-        message: "刷新成功",
-        type: "success",
-        duration: 5 * 1000,
-      });
+        message: '刷新成功',
+        type: 'success',
+        duration: 5 * 1000
+      })
     },
 
     details(row) {
-      this.inEndDetail = row;
-      this.status.detailDialogVisible = true;
+      this.inEndDetail = row
+      this.status.detailDialogVisible = true
     },
 
     removeInEnd(row) {
       remove(row.uuid).then((response) => {
         Message({
           message: response.msg,
-          type: "success",
-          duration: 5 * 1000,
-        });
-        this.getList();
-      });
+          type: 'success',
+          duration: 5 * 1000
+        })
+        this.getList()
+      })
     },
 
     isEmpty(obj) {
-      if (typeof obj === "number" && !isNaN(obj)) {
-        return false;
+      if (typeof obj === 'number' && !isNaN(obj)) {
+        return false
       }
       if (!obj) {
-        return true;
+        return true
       }
-      return Object.keys(obj).length < 1;
-    },
-  },
-};
+      return Object.keys(obj).length < 1
+    }
+  }
+}
 </script>
 <style lang="less" scoped></style>

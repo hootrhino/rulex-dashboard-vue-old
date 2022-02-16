@@ -115,3 +115,16 @@ export function param2Obj(url) {
   })
   return obj
 }
+
+/**
+ * 判空
+ */
+export function isEmpty(obj) {
+  if (typeof obj === 'number' && !isNaN(obj)) {
+    return false
+  }
+  if (!obj) {
+    return true
+  }
+  return Object.keys(obj).length < 1
+}
