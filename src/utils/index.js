@@ -128,3 +128,59 @@ export function isEmpty(obj) {
   }
   return Object.keys(obj).length < 1
 }
+
+// 对象深拷贝
+export function deepClone(data) {
+  var type = getObjectType(data)
+  var obj
+  if (type === 'array') {
+    obj = []
+  } else if (type === 'object') {
+    obj = {}
+  } else {
+    return data
+  }
+  if (type === 'array') {
+    for (var i = 0, len = data.length; i < len; i++) {
+      data[i] = (() => {
+        if (data[i] === 0) {
+          return data[i]
+        }
+        return data[i]
+      })()
+      if (data[i]) {
+        delete data[i].$parent
+      }
+      obj.push(deepClone(data[i]))
+    }
+  } else if (type === 'object') {
+    for (var key in data) {
+      if (data) {
+        delete data.$parent
+      }
+      obj[key] = deepClone(data[key])
+    }
+  }
+  return obj
+}
+
+// 获取对象类型
+export function getObjectType(obj) {
+  var toString = Object.prototype.toString
+  var map = {
+    '[object Boolean]': 'boolean',
+    '[object Number]': 'number',
+    '[object String]': 'string',
+    '[object Function]': 'function',
+    '[object Array]': 'array',
+    '[object Date]': 'date',
+    '[object RegExp]': 'regExp',
+    '[object Undefined]': 'undefined',
+    '[object Null]': 'null',
+    '[object Object]': 'object'
+  }
+  if (obj instanceof Element) {
+    return 'element'
+  }
+  return map[toString.call(obj)]
+}

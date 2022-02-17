@@ -22,7 +22,7 @@
             :placeholder="item.placeholder"
             clearable
             maxlength="100"
-            @change="changed($event, item.name)"
+            @change="changed($event, item.name, '')"
           />
           <el-input-number
             v-if="item.type == 'el-input-number'"
@@ -31,7 +31,7 @@
             style="width: 100%"
             controls-position="right"
             :placeholder="item.placeholder"
-            @change="changed($event, item.name)"
+            @change="changed($event, item.name, '')"
           />
           <el-select
             v-if="item.type === 'el-select'"
@@ -40,7 +40,7 @@
             clearable
             size="small"
             :placeholder="item.placeholder"
-            @change="changed($event, item.name)"
+            @change="changed($event, item.name, '')"
           >
             <el-option
               v-for="itemChild in item.selectOptions"
@@ -74,7 +74,7 @@
                 size="small"
                 clearable
                 :placeholder="childrenItem.placeholder"
-                @change="changed($event, `${item.name}.${childrenItem.name}`)"
+                @change="changed($event, item.name, childrenItem.name)"
               />
               <el-input-number
                 v-if="childrenItem.type == 'el-input-number'"
@@ -84,7 +84,7 @@
                 controls-position="right"
                 clearable
                 :placeholder="childrenItem.placeholder"
-                @change="changed($event, `${item.name}.${childrenItem.name}`)"
+                @change="changed($event, item.name, childrenItem.name)"
               />
               <el-select
                 v-if="childrenItem.type == 'el-select'"
@@ -93,7 +93,7 @@
                 clearable
                 size="small"
                 :placeholder="childrenItem.placeholder"
-                @change="changed($event, `${item.name}.${childrenItem.name}`)"
+                @change="changed($event, item.name, childrenItem.name)"
               >
                 <el-option
                   v-for="itemSon in childrenItem.selectOptions"
@@ -111,7 +111,8 @@
           ref="dynamicParamsRef"
           v-model="configForm[item.name]"
           :dynparams="item"
-          @childChanged="(val) => dynamicParamsChanged(val)"
+          :name="item.name"
+          @childChanged="(key, val) => dynamicParamsChanged(key, val)"
         />
       </div>
     </el-form>
@@ -121,6 +122,7 @@
 <script>
 import in_types from './../../views/inend/in_type'
 import dynamicParams from '@/components/DynamicParams/index.vue'
+import { isEmpty, deepClone } from '@/utils/index'
 export default {
   name: 'DynamicForm',
   components: {
@@ -134,9 +136,7 @@ export default {
   },
   data() {
     return {
-      configForm: {
-        registerParams: []
-      },
+      configForm: {},
       options_: [],
       tcpConfig: [],
       rtuConfig: []
@@ -160,9 +160,7 @@ export default {
   methods: {
     // 赋初值
     setDefaultValue() {
-      this.configForm = {
-        registerParams: []
-      }
+      this.configForm = {}
       if (this.options_ && this.options_.length > 0) {
         this.options_.forEach((item1, index1) => {
           const obj1 = item1
@@ -173,7 +171,7 @@ export default {
             })
           } else {
             if (Object.prototype.toString.call(obj1) === '[object Object]') {
-              this.configForm[item1.name] = this.deepClone(item1.value)
+              this.configForm[item1.name] = deepClone(item1.value)
             }
           }
         })
@@ -200,65 +198,8 @@ export default {
       return flag
     },
 
-    // 对象深拷贝
-    deepClone(data) {
-      var type = this.getObjectType(data)
-      var obj
-      if (type === 'array') {
-        obj = []
-      } else if (type === 'object') {
-        obj = {}
-      } else {
-        // 不再具有下一层次
-        return data
-      }
-      if (type === 'array') {
-        for (var i = 0, len = data.length; i < len; i++) {
-          data[i] = (() => {
-            if (data[i] === 0) {
-              return data[i]
-            }
-            return data[i]
-          })()
-          if (data[i]) {
-            delete data[i].$parent
-          }
-          obj.push(this.deepClone(data[i]))
-        }
-      } else if (type === 'object') {
-        for (var key in data) {
-          if (data) {
-            delete data.$parent
-          }
-          obj[key] = this.deepClone(data[key])
-        }
-      }
-      return obj
-    },
-
-    // 获取对象类型
-    getObjectType(obj) {
-      var toString = Object.prototype.toString
-      var map = {
-        '[object Boolean]': 'boolean',
-        '[object Number]': 'number',
-        '[object String]': 'string',
-        '[object Function]': 'function',
-        '[object Array]': 'array',
-        '[object Date]': 'date',
-        '[object RegExp]': 'regExp',
-        '[object Undefined]': 'undefined',
-        '[object Null]': 'null',
-        '[object Object]': 'object'
-      }
-      if (obj instanceof Element) {
-        return 'element'
-      }
-      return map[toString.call(obj)]
-    },
-
-    dynamicParamsChanged(val) {
-      this.configForm.registerParams = JSON.parse(JSON.stringify(val))
+    dynamicParamsChanged(key, val) {
+      this.configForm[key] = JSON.parse(JSON.stringify(val))
     },
 
     calcSpan(e) {
@@ -279,7 +220,7 @@ export default {
       return colSpan
     },
 
-    changed(val, key) {
+    changed(val, key1, key2) {
       if (val === 'TCP') {
         this.options_ = this.tcpConfig
         this.options_[0].value = 'TCP'
@@ -287,7 +228,11 @@ export default {
         this.options_ = this.rtuConfig
         this.options_[0].value = 'RTU'
       }
-      this.$set(this.configForm, key, val)
+      if (isEmpty(key2)) {
+        this.configForm[key1] = val
+      } else {
+        this.configForm[key1][key2] = val
+      }
     }
   }
 }

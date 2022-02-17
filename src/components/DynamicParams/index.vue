@@ -46,7 +46,7 @@
       </el-row>
     </el-form>
 
-    <!-- 动态增加项目 注册参数 -->
+    <!-- 动态增加项目 寄存器配置 -->
     <el-row
       v-for="(item, index) in moreRegisterParams"
       :key="index"
@@ -65,6 +65,7 @@
             clearable
             type="text"
             :placeholder="childrenItem.placeholder"
+            @change="changedMore($event, index, childrenItem.name)"
           />
           <el-input-number
             v-if="childrenItem.type == 'el-input-number'"
@@ -73,6 +74,7 @@
             style="width: 100%"
             controls-position="right"
             :placeholder="childrenItem.placeholder"
+            @change="changedMore($event, index, childrenItem.name)"
           />
         </el-form-item>
       </el-col>
@@ -89,20 +91,22 @@
       <el-button type="primary" size="small" @click="addRegisterParams">
         增加参数
       </el-button>
-      <el-button type="primary" size="small" @click="saveRegisterParams">
-        保存参数
-      </el-button>
     </div>
   </div>
 </template>
 
 <script>
+import { deepClone } from '@/utils/index'
 export default {
   name: 'DynamicParams',
 
   props: {
     dynparams: {
       type: Object,
+      required: true
+    },
+    name: {
+      type: String,
       required: true
     }
   },
@@ -120,9 +124,6 @@ export default {
   watch: {
     dynparams() {
       this.setDefaultValue()
-    },
-    moreRegisterParams() {
-      this.calcItems()
     }
   },
 
@@ -141,22 +142,16 @@ export default {
         this.dynparams.children.forEach((item1, index1) => {
           const obj1 = item1
           if (Object.prototype.toString.call(obj1) === '[object Object]') {
-            this.registerParams[item1.name] = this.deepClone(item1.value)
+            this.registerParams[item1.name] = deepClone(item1.value)
           }
         })
         this.registerParams = Object.assign({}, this.registerParams)
+        this.result.unshift(this.registerParams)
       }
+      this.$emit('childChanged', this.name, this.result)
     },
 
-    calcItems() {
-      if (this.moreRegisterParams.length >= 1) {
-        this.saveDisable = false
-      } else {
-        this.saveDisable = true
-      }
-    },
-
-    // 新增注册参数
+    // 新增寄存器配置
     addRegisterParams() {
       const obj = { ...this.registerParams }
       this.moreRegisterParams.push(obj)
@@ -166,78 +161,19 @@ export default {
       this.moreRegisterParams.splice(index, 1)
     },
 
-    // 对象深拷贝
-    deepClone(data) {
-      var type = this.getObjectType(data)
-      var obj
-      if (type === 'array') {
-        obj = []
-      } else if (type === 'object') {
-        obj = {}
-      } else {
-        // 不再具有下一层次
-        return data
-      }
-      if (type === 'array') {
-        for (var i = 0, len = data.length; i < len; i++) {
-          data[i] = (() => {
-            if (data[i] === 0) {
-              return data[i]
-            }
-            return data[i]
-          })()
-          if (data[i]) {
-            delete data[i].$parent
-          }
-          obj.push(this.deepClone(data[i]))
-        }
-      } else if (type === 'object') {
-        for (var key in data) {
-          if (data) {
-            delete data.$parent
-          }
-          obj[key] = this.deepClone(data[key])
-        }
-      }
-      return obj
-    },
-
-    // 获取对象类型
-    getObjectType(obj) {
-      var toString = Object.prototype.toString
-      var map = {
-        '[object Boolean]': 'boolean',
-        '[object Number]': 'number',
-        '[object String]': 'string',
-        '[object Function]': 'function',
-        '[object Array]': 'array',
-        '[object Date]': 'date',
-        '[object RegExp]': 'regExp',
-        '[object Undefined]': 'undefined',
-        '[object Null]': 'null',
-        '[object Object]': 'object'
-      }
-      if (obj instanceof Element) {
-        return 'element'
-      }
-      return map[toString.call(obj)]
-    },
-
     changed(val, key) {
       this.$set(this.registerParams, key, val)
+      this.echoData()
     },
 
-    saveRegisterParams() {
-      this.$refs.dynParFormRef.validate((valid) => {
-        if (valid) {
-          this.result = [...this.moreRegisterParams]
-          this.result.unshift(this.registerParams)
-          this.$emit('childChanged', this.result)
-          return true
-        } else {
-          return false
-        }
-      })
+    changedMore() {
+      this.echoData()
+    },
+
+    echoData() {
+      this.result = [...this.moreRegisterParams]
+      this.result.unshift(this.registerParams)
+      this.$emit('childChanged', this.name, this.result)
     }
   }
 }
