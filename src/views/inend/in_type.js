@@ -58,38 +58,6 @@ const in_types = {
       placeholder: '5'
     },
     {
-      type: 'el-inline',
-      label: '状态参数',
-      name: 'stateAddress',
-      required: true,
-      children: [
-        {
-          type: 'el-input-number',
-          name: 'address',
-          label: '地址编号',
-          value: 0,
-          required: true,
-          placeholder: '0'
-        },
-        {
-          type: 'el-input-number',
-          name: 'start',
-          label: '起始地址',
-          value: 1,
-          required: true,
-          placeholder: '1'
-        },
-        {
-          type: 'el-input-number',
-          name: 'size',
-          label: '读取数量',
-          value: 1,
-          required: true,
-          placeholder: '1'
-        }
-      ]
-    },
-    {
       type: 'dynamicParams',
       label: 'DB配置',
       name: 'dbs',
