@@ -26,12 +26,12 @@ const in_types = {
       placeholder: '1'
     },
     {
-      type: 'el-input-number',
+      type: 'el-input-text',
       name: 'model',
       label: '型号选择',
-      value: '200',
+      value: 'S7-200',
       required: true,
-      placeholder: '200'
+      placeholder: 'S7-200'
     },
     {
       type: 'el-input-number',
