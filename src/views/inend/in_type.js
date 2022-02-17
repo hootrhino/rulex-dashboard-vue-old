@@ -1,6 +1,6 @@
 const in_types = {
   // 西门子S7
-  SEMENS_S7: [
+  SIEMENS_S7: [
     {
       type: 'el-input-text',
       name: 'host',
@@ -24,6 +24,14 @@ const in_types = {
       value: 1,
       required: true,
       placeholder: '1'
+    },
+    {
+      type: 'el-input-number',
+      name: 'model',
+      label: '型号选择',
+      value: 'S7-200',
+      required: true,
+      placeholder: 'S7-200'
     },
     {
       type: 'el-input-number',
@@ -53,7 +61,7 @@ const in_types = {
       type: 'el-inline',
       label: '状态参数',
       name: 'stateAddress',
-      required: false,
+      required: true,
       children: [
         {
           type: 'el-input-number',
@@ -83,9 +91,9 @@ const in_types = {
     },
     {
       type: 'dynamicParams',
-      label: '注册参数',
+      label: 'DB配置',
       name: 'registerParams',
-      required: false,
+      required: true,
       children: [
         {
           type: 'el-input-text',
