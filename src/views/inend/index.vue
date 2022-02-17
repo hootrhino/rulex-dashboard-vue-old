@@ -203,15 +203,15 @@ export default {
       },
 
       protocolOptions: [
-        { text: "MQTT 协议接入", value: "MQTT" },
-        { text: "HTTP 协议接入", value: "HTTP" },
-        { text: "UDP 协议接入", value: "RULEX_UDP" },
-        { text: "COAP 协议接入", value: "COAP" },
-        { text: "GRPC 协议接入", value: "GRPC" },
-        { text: "通用串口接入", value: "UART_MODULE" },
-        { text: "MODBUS MASTER 模式", value: "MODBUS_MASTER" },
-        { text: "SNMP 协议接入", value: "SNMP_SERVER" },
-        { text: "西门子S7系列接入", value: "SIEMENS_S7" },
+        { text: 'MQTT 协议接入', value: 'MQTT' },
+        { text: 'HTTP 协议接入', value: 'HTTP' },
+        { text: 'UDP 协议接入', value: 'RULEX_UDP' },
+        { text: 'COAP 协议接入', value: 'COAP' },
+        { text: 'GRPC 协议接入', value: 'GRPC' },
+        { text: '通用串口接入', value: 'UART_MODULE' },
+        { text: 'MODBUS MASTER 模式', value: 'MODBUS_MASTER' },
+        { text: 'SNMP 协议接入', value: 'SNMP_SERVER' },
+        { text: '西门子S7系列接入', value: 'SIEMENS_S7' }
       ],
 
       // 配置文件

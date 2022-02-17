@@ -29,9 +29,9 @@ const in_types = {
       type: 'el-input-number',
       name: 'model',
       label: '型号选择',
-      value: 'S7-200',
+      value: '200',
       required: true,
-      placeholder: 'S7-200'
+      placeholder: '200'
     },
     {
       type: 'el-input-number',
@@ -92,7 +92,7 @@ const in_types = {
     {
       type: 'dynamicParams',
       label: 'DB配置',
-      name: 'registerParams',
+      name: 'dbs',
       required: true,
       children: [
         {
@@ -558,7 +558,7 @@ const in_types = {
     },
     {
       type: 'dynamicParams',
-      label: '注册参数',
+      label: '寄存器配置',
       name: 'registerParams',
       required: false,
       children: [
@@ -697,7 +697,7 @@ const in_types = {
     },
     {
       type: 'dynamicParams',
-      label: '注册参数',
+      label: '寄存器配置',
       required: false,
       name: 'registerParams',
       children: [
