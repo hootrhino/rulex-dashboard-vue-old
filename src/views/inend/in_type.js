@@ -1,4 +1,46 @@
 const in_types = {
+  NATS_SERVER: [
+    {
+      type: 'el-input-text',
+      name: 'host',
+      label: '服务地址',
+      value: '127.0.0.1',
+      required: true,
+      placeholder: '127.0.0.1'
+    },
+    {
+      type: 'el-input-number',
+      name: 'port',
+      label: '服务端口',
+      value: 4222,
+      required: true,
+      placeholder: '4222'
+    },
+    {
+      type: 'el-input-text',
+      name: 'user',
+      label: '用户名称',
+      value: 'rulex',
+      required: true,
+      placeholder: 'rulex'
+    },
+    {
+      type: 'el-input-text',
+      name: 'password',
+      label: '用户密码',
+      value: '',
+      required: true,
+      placeholder: ''
+    },
+    {
+      type: 'el-input-text',
+      name: 'topic',
+      label: '订阅主题',
+      value: 'rulex',
+      required: true,
+      placeholder: 'rulex'
+    },
+  ],
   // 西门子S7
   SIEMENS_S7: [
     {

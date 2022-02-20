@@ -73,9 +73,7 @@
             </el-form-item>
           </el-form>
           <div slot="footer" class="dialog-footer">
-            <el-button @click="status.createDialogVisible = false">
-              取 消
-            </el-button>
+            <el-button @click="status.createDialogVisible = false"> 取 消 </el-button>
             <el-button
               type="primary"
               :loading="status.createLoading"
@@ -120,11 +118,7 @@
             <el-button size="mini" type="primary" @click="details(scope.row)">
               详情
             </el-button>
-            <el-button
-              size="mini"
-              type="danger"
-              @click="removeInEnd(scope.row)"
-            >
+            <el-button size="mini" type="danger" @click="removeInEnd(scope.row)">
               删除
             </el-button>
           </template>
@@ -211,7 +205,8 @@ export default {
         { text: '通用串口接入', value: 'UART_MODULE' },
         { text: 'MODBUS MASTER 模式', value: 'MODBUS_MASTER' },
         { text: 'SNMP 协议接入', value: 'SNMP_SERVER' },
-        { text: '西门子S7系列接入', value: 'SIEMENS_S7' }
+        { text: '西门子S7系列接入', value: 'SIEMENS_S7' },
+        { text: 'NATS 总线接入', value: 'NATS_SERVER' },
       ],
 
       // 配置文件
