@@ -113,9 +113,15 @@
             <el-tag v-else type="danger">异常</el-tag>
           </template>
         </el-table-column>
-        <el-table-column fixed="right" label="操作" width="160">
+        <el-table-column  fixed="right" label="操作" width="320">
           <template slot-scope="scope">
+            <el-button size="mini" type="success" @click="details(scope.row)">
+              拓扑
+            </el-button>
             <el-button size="mini" type="primary" @click="details(scope.row)">
+              数据模型
+            </el-button>
+            <el-button size="mini" type="info" @click="details(scope.row)">
               详情
             </el-button>
             <el-button size="mini" type="danger" @click="removeInEnd(scope.row)">
