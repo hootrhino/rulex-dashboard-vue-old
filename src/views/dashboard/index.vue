@@ -8,7 +8,7 @@
               <div slot="header" class="clearfix">
                 <span>当前版本</span>
               </div>
-              <h2>{{ systemInfo.version }}</h2>
+              <h2>{{ systemInfo.osArch }} <br />{{ systemInfo.version }}</h2>
             </el-card>
           </div>
         </el-col>
@@ -16,9 +16,9 @@
           <div class="grid-content bg-purple">
             <el-card shadow="always" class="box-card" style="height: 160px">
               <div slot="header" class="clearfix">
-                <span>操作系统</span>
+                <span>启动时间</span>
               </div>
-              <h2>{{ systemInfo.osArch }}</h2>
+              <h2>{{ systemInfo.startedTime }}</h2>
             </el-card>
           </div>
         </el-col>
@@ -29,7 +29,7 @@
                 <span>CPU使用</span>
               </div>
               <el-progress
-                :percentage="systemInfo.system > 100 ? 100 : systemInfo.system"
+                :percentage="systemInfo.system"
                 :color="customColors"
                 :stroke-width="26"
                 style="margin-top: 16px"
@@ -166,86 +166,86 @@
 </template>
 
 <script>
-import { system } from '@/api/system'
-import { statistics } from '@/api/system'
-import { resourceCount } from '@/api/system'
-import { logs } from '@/api/system'
+import { system } from "@/api/system";
+import { statistics } from "@/api/system";
+import { resourceCount } from "@/api/system";
+import { logs } from "@/api/system";
 
 export default {
-  name: 'Dashboard',
+  name: "Dashboard",
   data() {
     return {
       resourceCount: {
         inends: 0,
         outends: 0,
         rules: 0,
-        plugins: 0
+        plugins: 0,
       },
       statistics: {
         inFailed: 0,
         inSuccess: 0,
         outFailed: 0,
-        outSuccess: 0
+        outSuccess: 0,
       },
       systemInfo: {
         alloc: 0,
         cpuPercent: [],
         diskInfo: 0,
-        osArch: '',
+        osArch: "",
         system: 0,
         total: 0,
-        version: ''
+        version: "",
       },
       logs: [],
       // 进度条颜色
       customColors: [
-        { color: '#58D68D', percentage: 20 },
-        { color: '#27AE60', percentage: 40 },
-        { color: '#D4AC0D', percentage: 60 },
-        { color: '#E59866', percentage: 80 },
-        { color: '#D35400', percentage: 100 }
-      ]
-    }
+        { color: "#58D68D", percentage: 20 },
+        { color: "#27AE60", percentage: 40 },
+        { color: "#D4AC0D", percentage: 60 },
+        { color: "#E59866", percentage: 80 },
+        { color: "#D35400", percentage: 100 },
+      ],
+    };
   },
   created() {
-    const thiz = this
-    thiz.getSystem()
-    thiz.getStatistics()
-    thiz.getResourceCount()
-    thiz.getLogs()
+    const thiz = this;
+    thiz.getSystem();
+    thiz.getStatistics();
+    thiz.getResourceCount();
+    thiz.getLogs();
     setInterval(() => {
-      thiz.getSystem()
-      thiz.getStatistics()
-      thiz.getResourceCount()
-      thiz.getLogs()
-    }, 3000)
+      thiz.getSystem();
+      thiz.getStatistics();
+      thiz.getResourceCount();
+      thiz.getLogs();
+    }, 3000);
   },
   destroyed() {
     for (let i = 0; i <= 3; i++) {
-      clearInterval(i)
+      clearInterval(i);
     }
   },
   methods: {
     getSystem() {
       system().then((response) => {
-        this.systemInfo = response.data
-      })
+        this.systemInfo = response.data;
+      });
     },
     getStatistics() {
       statistics().then((response) => {
-        this.statistics = response.data
-      })
+        this.statistics = response.data;
+      });
     },
     getResourceCount() {
       resourceCount().then((response) => {
-        this.resourceCount = response.data
-      })
+        this.resourceCount = response.data;
+      });
     },
     getLogs() {
       logs().then((response) => {
-        this.logs = response.data
-      })
-    }
-  }
-}
+        this.logs = response.data;
+      });
+    },
+  },
+};
 </script>
