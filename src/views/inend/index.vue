@@ -113,12 +113,12 @@
             <el-tag v-else type="danger">异常</el-tag>
           </template>
         </el-table-column>
-        <el-table-column  fixed="right" label="操作" width="320">
+        <el-table-column fixed="right" label="操作" width="320">
           <template slot-scope="scope">
-            <el-button size="mini" type="success" @click="details(scope.row)">
+            <!-- <el-button size="mini" type="success" @click="details(scope.row)">
               拓扑
-            </el-button>
-            <el-button size="mini" type="primary" @click="details(scope.row)">
+            </el-button> -->
+            <el-button size="mini" type="primary" @click="showDataModels(scope.row)">
               数据模型
             </el-button>
             <el-button size="mini" type="info" @click="details(scope.row)">
@@ -160,185 +160,217 @@
           </el-button>
         </span>
       </el-dialog>
+      <!-- ---- 数据模型 -->
+      <el-dialog
+        title="数据模型"
+        :visible.sync="status.dataModelDialogVisible"
+        width="1000px"
+      >
+        <el-descriptions border :column="1" :label-style="LS">
+          <el-descriptions-item label="字段名 ">
+            当前值
+          </el-descriptions-item>
+          <el-descriptions-item
+            v-for="(item, index) in dataModels"
+            :key="index"
+            :label="index"
+          >
+            <template slot="label"> {{ item.name }} </template>
+            <div v-if="item.value == 0">0</div>
+            <div v-if="item.value != 0">{{ item.value }}</div>
+          </el-descriptions-item>
+        </el-descriptions>
+        <span slot="footer">
+          <el-button type="primary" @click="status.dataModelDialogVisible = false">
+            确 定
+          </el-button>
+        </span>
+      </el-dialog>
     </el-main>
   </el-container>
 </template>
 
 <script>
-import { list } from '@/api/inend'
-import { remove } from '@/api/inend'
-import { create } from '@/api/inend'
-import { Message } from 'element-ui'
-import in_types from './in_type'
-import DynamicForm from '@/components/DynamicForm/index.vue'
+import { list } from "@/api/inend";
+import { remove } from "@/api/inend";
+import { create } from "@/api/inend";
+import { getDataModels } from "@/api/inend";
+import { Message } from "element-ui";
+import in_types from "./in_type";
+import DynamicForm from "@/components/DynamicForm/index.vue";
 export default {
-  name: 'InEnd',
+  name: "InEnd",
   components: {
-    DynamicForm
+    DynamicForm,
   },
   data() {
     return {
       LS: {
-        width: '200px'
+        width: "200px",
       },
 
       // 输入资源管理 新增、编辑
       createForm: {
-        type: '',
-        name: '',
-        description: '',
-        config: {}
+        type: "",
+        name: "",
+        description: "",
+        config: {},
       },
 
       createFormRules: {
-        type: [
-          { required: true, message: '输入类型', trigger: ['blur', 'change'] }
-        ],
-        name: [
-          { required: true, message: '输入名称', trigger: ['blur', 'change'] }
-        ],
+        type: [{ required: true, message: "输入类型", trigger: ["blur", "change"] }],
+        name: [{ required: true, message: "输入名称", trigger: ["blur", "change"] }],
         description: [
-          { required: true, message: '输入描述', trigger: ['blur', 'change'] }
-        ]
+          { required: true, message: "输入描述", trigger: ["blur", "change"] },
+        ],
       },
 
       protocolOptions: [
-        { text: 'MQTT 协议接入', value: 'MQTT' },
-        { text: 'HTTP 协议接入', value: 'HTTP' },
-        { text: 'UDP 协议接入', value: 'RULEX_UDP' },
-        { text: 'COAP 协议接入', value: 'COAP' },
-        { text: 'GRPC 协议接入', value: 'GRPC' },
-        { text: '通用串口接入', value: 'UART_MODULE' },
-        { text: 'MODBUS MASTER 模式', value: 'MODBUS_MASTER' },
-        { text: 'SNMP 协议接入', value: 'SNMP_SERVER' },
-        { text: '西门子S7系列接入', value: 'SIEMENS_S7' },
-        { text: 'NATS 总线接入', value: 'NATS_SERVER' },
+        { text: "MQTT 协议接入", value: "MQTT" },
+        { text: "HTTP 协议接入", value: "HTTP" },
+        { text: "UDP 协议接入", value: "RULEX_UDP" },
+        { text: "COAP 协议接入", value: "COAP" },
+        { text: "GRPC 协议接入", value: "GRPC" },
+        { text: "通用串口接入", value: "UART_MODULE" },
+        { text: "MODBUS MASTER 模式", value: "MODBUS_MASTER" },
+        { text: "SNMP 协议接入", value: "SNMP_SERVER" },
+        { text: "西门子S7系列接入", value: "SIEMENS_S7" },
+        { text: "NATS 总线接入", value: "NATS_SERVER" },
       ],
 
       // 配置文件
       jsonConfig: [],
       tableData: [],
+      dataModels: [],
       inEndDetail: {},
-      protocol: '',
+      protocol: "",
       status: {
         createLoading: false,
         createDialogVisible: false,
         detailDialogVisible: false,
-        configFormVisible: false
-      }
-    }
+        // 配置
+        configFormVisible: false,
+        // 数据模型
+        dataModelDialogVisible: false,
+      },
+    };
   },
 
   created() {
-    this.getList()
+    this.getList();
   },
 
   methods: {
     getList() {
       list().then((response) => {
-        this.tableData = response.data
-      })
+        this.tableData = response.data;
+      });
     },
 
     // 新建资源 》资源类型改变
     onSelectChange(v) {
       if (this.isEmpty(v)) {
-        this.protocol = ''
-        this.jsonConfig = []
-        this.status.configFormVisible = false
+        this.protocol = "";
+        this.jsonConfig = [];
+        this.status.configFormVisible = false;
       } else {
-        this.protocol = v
-        this.jsonConfig = in_types[v]
-        this.status.configFormVisible = true
+        this.protocol = v;
+        this.jsonConfig = in_types[v];
+        this.status.configFormVisible = true;
       }
     },
 
     // 新建资源 对话框关闭
     createDialogClosed() {
-      this.status.configFormVisible = false
-      this.status.createLoading = false
-      this.$refs.createFormRef.resetFields()
-      this.createForm = this.$options.data().createForm
+      this.status.configFormVisible = false;
+      this.status.createLoading = false;
+      this.$refs.createFormRef.resetFields();
+      this.createForm = this.$options.data().createForm;
     },
 
     dynamicFormChanged(val) {
-      this.createForm.config = JSON.parse(JSON.stringify(val))
+      this.createForm.config = JSON.parse(JSON.stringify(val));
     },
 
     createInEnd() {
       this.$refs.createFormRef.validate((valid) => {
         if (valid) {
           // 配置表单也验证通过才提交
-          const flag = this.$refs.dynamicFormRef.validateForm()
+          const flag = this.$refs.dynamicFormRef.validateForm();
           if (flag) {
-            var params = JSON.parse(JSON.stringify(this.createForm))
-            this.status.createLoading = true
+            var params = JSON.parse(JSON.stringify(this.createForm));
+            this.status.createLoading = true;
             create(params)
               .then((_response) => {
                 Message({
-                  message: '创建成功',
-                  type: 'success',
-                  duration: 5 * 1000
-                })
-                this.getList()
-                this.status.createDialogVisible = false
+                  message: "创建成功",
+                  type: "success",
+                  duration: 5 * 1000,
+                });
+                this.getList();
+                this.status.createDialogVisible = false;
               })
               .catch(() => {
-                this.status.createLoading = false
-              })
-            return true
+                this.status.createLoading = false;
+              });
+            return true;
           } else {
-            return false
+            return false;
           }
         } else {
-          return false
+          return false;
         }
-      })
+      });
     },
 
     filterHandler(value, row) {
-      return row.type === value
+      return row.type === value;
     },
 
     filterState(value, row) {
-      return row.state === value
+      return row.state === value;
     },
 
     refreshList() {
-      this.getList()
+      this.getList();
       Message({
-        message: '刷新成功',
-        type: 'success',
-        duration: 5 * 1000
-      })
+        message: "刷新成功",
+        type: "success",
+        duration: 5 * 1000,
+      });
     },
 
     details(row) {
-      this.inEndDetail = row
-      this.status.detailDialogVisible = true
+      this.inEndDetail = row;
+      this.status.detailDialogVisible = true;
     },
-
+    showDataModels(row) {
+      getDataModels(row.uuid).then((response) => {
+        this.dataModels = response.data;
+        this.status.dataModelDialogVisible = true;
+      });
+    },
     removeInEnd(row) {
       remove(row.uuid).then((response) => {
         Message({
           message: response.msg,
-          type: 'success',
-          duration: 5 * 1000
-        })
-        this.getList()
-      })
+          type: "success",
+          duration: 5 * 1000,
+        });
+        this.getList();
+      });
     },
 
     isEmpty(obj) {
-      if (typeof obj === 'number' && !isNaN(obj)) {
-        return false
+      if (typeof obj === "number" && !isNaN(obj)) {
+        return false;
       }
       if (!obj) {
-        return true
+        return true;
       }
-      return Object.keys(obj).length < 1
-    }
-  }
-}
+      return Object.keys(obj).length < 1;
+    },
+  },
+};
 </script>
 <style lang="less" scoped></style>

@@ -17,7 +17,7 @@
         style="width: 100%; margin-top: 10px"
         height="700"
       >
-        <el-table-column prop="id" label="ID" width="70px"> </el-table-column>
+        <!-- <el-table-column prop="id" label="ID" width="70px"> </el-table-column> -->
         <el-table-column prop="content" label="近期日志"> </el-table-column>
       </el-table> </el-main
   ></el-container>
