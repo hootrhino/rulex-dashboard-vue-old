@@ -17,7 +17,7 @@
               v-model="loginForm.username"
               type="text"
               maxlength="10"
-              placeholder="Username"
+              placeholder="账户"
             />
           </el-form-item>
           <el-form-item prop="password">
@@ -25,7 +25,7 @@
               v-model="loginForm.password"
               type="password"
               maxlength="16"
-              placeholder="Password"
+              placeholder="密码"
               @keyup.enter.native="handleLogin"
             />
           </el-form-item>
@@ -59,100 +59,100 @@
 
 <script>
 export default {
-  name: 'Login',
+  name: "Login",
   data() {
     return {
       loginForm: {
-        username: '',
-        password: ''
+        username: "",
+        password: "",
       },
       loginFormRules: {
         username: [
           {
             required: true,
-            trigger: 'blur',
-            message: 'Please enter user name'
+            trigger: "blur",
+            message: "请输入正确的用户名",
           },
           {
             min: 5,
             max: 10,
-            trigger: 'blur',
-            message: 'Please enter the correct user name'
-          }
+            trigger: "blur",
+            message: "请输入正确的用户名",
+          },
         ],
         password: [
           {
             required: true,
-            trigger: 'blur',
-            message: 'Please enter password'
+            trigger: "blur",
+            message: "请输入正确的密码",
           },
           {
             min: 5,
             max: 16,
-            trigger: 'blur',
-            message: 'The password can not be less than 6 digits'
-          }
-        ]
+            trigger: "blur",
+            message: "请输入正确的密码, 密码最少6位",
+          },
+        ],
       },
       loading: false,
-      redirect: undefined
-    }
+      redirect: undefined,
+    };
   },
 
   watch: {
     $route: {
-      handler: function(route) {
-        this.redirect = route.query && route.query.redirect
+      handler: function (route) {
+        this.redirect = route.query && route.query.redirect;
       },
-      immediate: true
-    }
+      immediate: true,
+    },
   },
 
   mounted() {
-    this.initLogo()
+    this.initLogo();
   },
 
   methods: {
     initLogo() {
-      var c = document.getElementById('myCanvas')
-      var ctx = c.getContext('2d')
-      ctx.lineWidth = 0
-      ctx.beginPath()
-      ctx.arc(100, 100, 50, 0, 2 * Math.PI)
-      ctx.strokeStyle = '#00BFFF'
-      ctx.stroke()
-      ctx.beginPath()
-      ctx.arc(100, 100, 20, 0, 2 * Math.PI)
-      ctx.fillStyle = '#00BFFF'
-      ctx.fill()
-      ctx.strokeStyle = '#00BFFF'
-      ctx.stroke()
-      ctx.beginPath()
-      ctx.arc(70, 60, 10, 0, 2 * Math.PI)
-      ctx.fillStyle = '#00BFFF'
-      ctx.fill()
-      ctx.strokeStyle = '#00BFFF'
-      ctx.stroke()
+      var c = document.getElementById("myCanvas");
+      var ctx = c.getContext("2d");
+      ctx.lineWidth = 0;
+      ctx.beginPath();
+      ctx.arc(100, 100, 50, 0, 2 * Math.PI);
+      ctx.strokeStyle = "#00BFFF";
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(100, 100, 20, 0, 2 * Math.PI);
+      ctx.fillStyle = "#00BFFF";
+      ctx.fill();
+      ctx.strokeStyle = "#00BFFF";
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(70, 60, 10, 0, 2 * Math.PI);
+      ctx.fillStyle = "#00BFFF";
+      ctx.fill();
+      ctx.strokeStyle = "#00BFFF";
+      ctx.stroke();
     },
 
     handleLogin() {
       this.$refs.loginFormRef.validate((valid) => {
         if (valid) {
-          this.loading = true
+          this.loading = true;
           this.$store
-            .dispatch('user/login', this.loginForm)
+            .dispatch("user/login", this.loginForm)
             .then(() => {
-              this.$router.push({ path: this.redirect || '/' })
-              this.loading = false
+              this.$router.push({ path: this.redirect || "/" });
+              this.loading = false;
             })
             .catch(() => {
-              this.loading = false
-            })
+              this.loading = false;
+            });
         }
-      })
-    }
-  }
-}
+      });
+    },
+  },
+};
 </script>
 
 <style lang="less" scoped>
@@ -169,7 +169,7 @@ export default {
     left: 50%;
     z-index: 7;
     transform: translate(-50%, -50%);
-    background: #fff;
+    background: #ffffff;
     box-shadow: 0px 0px 5px 5px rgba(0, 0, 0, 0.2);
     .login-box-left {
       width: 55%;
@@ -180,11 +180,10 @@ export default {
       background-size: 100% 100%;
       .login-title {
         padding: 15px 40px;
-        color: #00a1e7;
-        font-size: 60px;
+        color: #ffffff;
+        font-size: 62px;
         line-height: 1;
         font-weight: bold;
-        background: #fff;
       }
     }
     .login-box-right {

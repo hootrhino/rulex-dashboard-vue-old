@@ -1,12 +1,12 @@
 import axios from 'axios'
-import {Message} from 'element-ui'
+import { Message } from 'element-ui'
 import store from '@/store'
-import {getToken} from '@/utils/auth'
+import { getToken } from '@/utils/auth'
 
 // create an axios instance
 const service = axios.create({
     baseURL: process.env.VUE_APP_BASE_API, // URL
-    timeout: 9000 // 超时时间非常长，给9秒
+    timeout: 5000
 })
 
 // request interceptor
@@ -39,7 +39,7 @@ service.interceptors.response.use(response => {
     return res
 
 }, error => {
-    console.log('service.interceptors.response error: ' + error)
+    console.log('请求失败: ' + error)
     Message({
         message: error,
         type: 'error',
