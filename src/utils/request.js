@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { Message } from 'element-ui'
 import store from '@/store'
-import { getToken } from '@/utils/auth'
+// import { getToken } from '@/utils/auth'
 
 // create an axios instance
 const service = axios.create({
@@ -12,7 +12,7 @@ const service = axios.create({
 // request interceptor
 service.interceptors.request.use(config => {
     if (store.getters.token) {
-        config.headers['X-Token'] = getToken()
+        config.headers['X-Token'] = store.getters['token']
         config.headers['cache-control'] = 'no-cache'
     }
     return config

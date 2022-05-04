@@ -205,6 +205,7 @@ export default {
         { color: "#E59866", percentage: 80 },
         { color: "#D35400", percentage: 100 },
       ],
+      interVal:null,
     };
   },
   created() {
@@ -213,7 +214,7 @@ export default {
     thiz.getStatistics();
     thiz.getResourceCount();
     thiz.getLogs();
-    setInterval(() => {
+    thiz.interVal = setInterval(() => {
       thiz.getSystem();
       thiz.getStatistics();
       thiz.getResourceCount();
@@ -222,8 +223,9 @@ export default {
   },
   destroyed() {
     for (let i = 0; i <= 3; i++) {
-      clearInterval(i);
+      // clearInterval(i);
     }
+    clearInterval(this.interVal);
   },
   methods: {
     getSystem() {
